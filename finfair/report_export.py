@@ -62,8 +62,20 @@ def build_docx_report(result: AnalysisResult, document_name: str) -> bytes:
 
     doc.add_heading("金融产品公平说明书", level=0)
     subtitle = doc.add_paragraph()
-    subtitle.add_run(f"分析文件：{document_name}\n").bold = True
+    subtitle.add_run(f"分析文件：{result.document_name or document_name}\n").bold = True
     subtitle.add_run(f"分析引擎：{result.engine}\n")
+    subtitle.add_run(f"分析模式：{result.analysis_mode}\n")
+    subtitle.add_run(
+        f"文档覆盖：解析{result.page_count}页，提取{result.extracted_char_count}个字符，"
+        f"空白/未提取文字页面{result.empty_page_count}页\n"
+    )
+    if result.agent_run.enabled:
+        subtitle.add_run(
+            f"Agent覆盖：接收{result.agent_char_count}个文档字符；"
+            f"{'输入已截断，未覆盖完整提取文本' if result.agent_truncated else '输入未截断'}\n"
+        )
+    else:
+        subtitle.add_run("Agent覆盖：未启用，确定性规则处理全部已提取文字\n")
     subtitle.add_run("用途：教学演示，不构成投资建议或正式适当性评估。")
 
     doc.add_heading("30秒看懂产品", level=1)
@@ -82,16 +94,32 @@ def build_docx_report(result: AnalysisResult, document_name: str) -> bytes:
         p.add_run(f"{item.label}：{item.value}（{page}）").bold = True
         doc.add_paragraph(item.plain_language)
 
-    doc.add_heading("宣传材料一致性检查", level=1)
-    if result.findings:
+    status_labels = {
+        "supported": "支持",
+        "omitted": "未披露",
+        "weakened": "弱化",
+        "conflicting": "冲突",
+        "unclear": "无法判断",
+    }
+    doc.add_heading("宣传材料与正式说明书逐项对照", level=1)
+    if not result.marketing_provided:
+        doc.add_paragraph("本次未输入宣传材料，因此没有执行宣传材料对照。")
+    elif result.findings:
         for finding in result.findings:
             doc.add_heading(
-                f"[{finding.severity.upper()}] {finding.title}", level=2
+                f"{finding.title}｜{status_labels.get(finding.status, finding.status)}",
+                level=2,
             )
             doc.add_paragraph(finding.explanation)
             marketing = doc.add_paragraph()
-            marketing.add_run("宣传原文：").bold = True
-            marketing.add_run(finding.marketing_text or "宣传材料未披露")
+            marketing.add_run("宣传材料说法：").bold = True
+            marketing.add_run(finding.marketing_text or "未披露")
+            formal = doc.add_paragraph()
+            formal.add_run("正式说明书怎么写：").bold = True
+            formal.add_run(finding.formal_plain_language)
+            status = doc.add_paragraph()
+            status.add_run("核验状态：").bold = True
+            status.add_run(status_labels.get(finding.status, finding.status))
             page = (
                 f"第{finding.formal_evidence.page}页"
                 if finding.formal_evidence.page
@@ -101,14 +129,29 @@ def build_docx_report(result: AnalysisResult, document_name: str) -> bytes:
             evidence.add_run(f"正式文件证据（{page}）：").bold = True
             evidence.add_run(finding.formal_evidence.text)
     else:
-        doc.add_paragraph("未提交宣传材料，或当前规则未发现明显差异。")
+        doc.add_paragraph("已输入宣传材料，当前规则没有生成可对照项目。")
 
     doc.add_heading("大模型语义增强", level=1)
-    if result.agent_run.enabled and result.agent_insights:
+    if result.agent_run.enabled:
         doc.add_paragraph(
-            f"模型：{result.agent_run.model}；"
-            f"已通过证据核验 {result.agent_run.accepted_count} 项。"
+            f"模型：{result.agent_run.model}；协议："
+            f"{result.agent_run.protocol or '未记录'}。"
         )
+        doc.add_paragraph(
+            "固定流程：规则引擎 → 分析 Agent → 核验 Agent → 程序逐字引用门控。"
+        )
+        doc.add_paragraph(
+            f"候选{result.agent_run.candidate_count}项；"
+            f"核验支持{result.agent_run.verifier_supported_count}项；"
+            f"门控通过{result.agent_run.gate_passed_count}项；"
+            f"最终拦截{result.agent_run.rejected_count}项。"
+        )
+        doc.add_paragraph(f"停止条件：{result.agent_run.stop_reason}")
+        if result.agent_run.error:
+            doc.add_paragraph(f"降级原因：{result.agent_run.error}")
+        for reason in result.agent_run.rejection_reasons:
+            doc.add_paragraph(f"拦截：{reason}", style="List Bullet")
+    if result.agent_run.enabled and result.agent_insights:
         for insight in result.agent_insights:
             doc.add_heading(insight.title, level=2)
             doc.add_paragraph(insight.conclusion)
@@ -228,8 +271,24 @@ def build_pdf_report(result: AnalysisResult, document_name: str) -> bytes:
     story = [Paragraph("金融产品公平说明书", title)]
     story.extend(
         [
-            Paragraph(f"分析文件：{escape(document_name)}", meta),
+            Paragraph(f"分析文件：{escape(result.document_name or document_name)}", meta),
             Paragraph(f"分析引擎：{escape(result.engine)}", meta),
+            Paragraph(f"分析模式：{escape(result.analysis_mode)}", meta),
+            Paragraph(
+                f"文档覆盖：解析{result.page_count}页，"
+                f"提取{result.extracted_char_count}个字符，"
+                f"空白/未提取文字页面{result.empty_page_count}页",
+                meta,
+            ),
+            Paragraph(
+                (
+                    f"Agent覆盖：接收{result.agent_char_count}个文档字符；"
+                    f"{'输入已截断，未覆盖完整提取文本' if result.agent_truncated else '输入未截断'}"
+                    if result.agent_run.enabled
+                    else "Agent覆盖：未启用，确定性规则处理全部已提取文字"
+                ),
+                meta,
+            ),
             Paragraph("教学演示，不构成投资建议或正式适当性评估。", meta),
             Spacer(1, 8),
             Paragraph("30秒看懂产品", h1),
@@ -263,8 +322,17 @@ def build_pdf_report(result: AnalysisResult, document_name: str) -> bytes:
         )
         story.append(Paragraph(escape(item.plain_language), evidence_style))
 
-    story.append(Paragraph("宣传材料一致性检查", h1))
-    if result.findings:
+    status_labels = {
+        "supported": "支持",
+        "omitted": "未披露",
+        "weakened": "弱化",
+        "conflicting": "冲突",
+        "unclear": "无法判断",
+    }
+    story.append(Paragraph("宣传材料与正式说明书逐项对照", h1))
+    if not result.marketing_provided:
+        story.append(Paragraph("本次未输入宣传材料，因此没有执行宣传材料对照。", body))
+    elif result.findings:
         for finding in result.findings:
             page = (
                 f"第{finding.formal_evidence.page}页"
@@ -275,12 +343,22 @@ def build_pdf_report(result: AnalysisResult, document_name: str) -> bytes:
                 KeepTogether(
                     [
                         Paragraph(
-                            f"[{finding.severity.upper()}] {escape(finding.title)}",
+                            f"{escape(finding.title)}｜"
+                            f"{escape(status_labels.get(finding.status, finding.status))}",
                             h2,
                         ),
                         Paragraph(escape(finding.explanation), body),
                         Paragraph(
-                            f"<b>宣传原文：</b>{escape(finding.marketing_text or '宣传材料未披露')}",
+                            f"<b>宣传材料说法：</b>{escape(finding.marketing_text or '未披露')}",
+                            body,
+                        ),
+                        Paragraph(
+                            f"<b>正式说明书怎么写：</b>{escape(finding.formal_plain_language)}",
+                            body,
+                        ),
+                        Paragraph(
+                            f"<b>核验状态：</b>"
+                            f"{escape(status_labels.get(finding.status, finding.status))}",
                             body,
                         ),
                         Paragraph(
@@ -291,17 +369,40 @@ def build_pdf_report(result: AnalysisResult, document_name: str) -> bytes:
                 )
             )
     else:
-        story.append(Paragraph("未提交宣传材料，或当前规则未发现明显差异。", body))
+        story.append(Paragraph("已输入宣传材料，当前规则没有生成可对照项目。", body))
 
     story.append(Paragraph("大模型语义增强", h1))
-    if result.agent_run.enabled and result.agent_insights:
-        story.append(
-            Paragraph(
-                f"模型：{escape(result.agent_run.model)}；"
-                f"已通过证据核验 {result.agent_run.accepted_count} 项。",
-                body,
-            )
+    if result.agent_run.enabled:
+        story.extend(
+            [
+                Paragraph(
+                    f"模型：{escape(result.agent_run.model)}；协议："
+                    f"{escape(result.agent_run.protocol or '未记录')}。",
+                    body,
+                ),
+                Paragraph(
+                    "固定流程：规则引擎 → 分析 Agent → 核验 Agent → 程序逐字引用门控。",
+                    body,
+                ),
+                Paragraph(
+                    f"候选{result.agent_run.candidate_count}项；"
+                    f"核验支持{result.agent_run.verifier_supported_count}项；"
+                    f"门控通过{result.agent_run.gate_passed_count}项；"
+                    f"最终拦截{result.agent_run.rejected_count}项。",
+                    body,
+                ),
+                Paragraph(
+                    f"停止条件：{escape(result.agent_run.stop_reason)}", body
+                ),
+            ]
         )
+        if result.agent_run.error:
+            story.append(
+                Paragraph(f"降级原因：{escape(result.agent_run.error)}", body)
+            )
+        for reason in result.agent_run.rejection_reasons:
+            story.append(Paragraph(f"• 拦截：{escape(reason)}", body))
+    if result.agent_run.enabled and result.agent_insights:
         for insight in result.agent_insights:
             page = f"第{insight.evidence.page}页" if insight.evidence.page else "未定位"
             story.append(

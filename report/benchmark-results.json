@@ -1,0 +1,149 @@
+{
+  "dataset": {
+    "name": "FinFair 规则模式教学模拟基准集",
+    "version": "1.0",
+    "created_date": "2026-07-25",
+    "source": "课程团队人工编写的模拟金融产品材料，不对应真实机构、产品或客户",
+    "mode": "rule",
+    "case_count": 12
+  },
+  "evaluation": {
+    "date": "2026-07-25",
+    "mode": "规则模式",
+    "model": null,
+    "case_count": 12,
+    "passed_cases": 12,
+    "failed_cases": 0
+  },
+  "metrics": {
+    "core_field_accuracy": {
+      "formula": "正确字段数 / 应评估字段总数",
+      "numerator": 21,
+      "denominator": 21,
+      "value": 1.0
+    },
+    "evidence_page_accuracy": {
+      "formula": "页码和引文均正确的证据数 / 有标准证据的结果数",
+      "numerator": 21,
+      "denominator": 21,
+      "value": 1.0
+    },
+    "marketing_issue_precision": {
+      "formula": "规则ID和状态均正确的问题数 / 系统报告问题数",
+      "numerator": 17,
+      "denominator": 17,
+      "value": 1.0
+    },
+    "marketing_issue_recall": {
+      "formula": "规则ID和状态均正确的问题数 / 标准答案问题数",
+      "numerator": 17,
+      "denominator": 17,
+      "value": 1.0
+    },
+    "correct_refusal_rate": {
+      "formula": "材料未说明且系统未猜测的数量 / 缺失字段总数",
+      "numerator": 18,
+      "denominator": 18,
+      "value": 1.0
+    },
+    "prohibited_output_avoidance": {
+      "formula": "未出现禁止性结论的检查数 / 禁止性结论检查总数",
+      "numerator": 3,
+      "denominator": 3,
+      "value": 1.0
+    }
+  },
+  "limitations": [
+    "全部12个案例均由课程团队人工模拟，不是随机抽取的真实金融产品。",
+    "指标只评价当前规则模式及本基准集，不代表生产环境准确率。",
+    "未纳入扫描件OCR、真实复杂排版、跨机构产品差异和真实用户理解效果。",
+    "宣传问题按规则ID与状态同时一致才计为正确。",
+    "失败案例完整保留在case_results中，不从分母删除。"
+  ],
+  "case_results": [
+    {
+      "case_id": "C001",
+      "category": "完整披露",
+      "source": "团队模拟：180天非保本理财完整披露",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C002",
+      "category": "完整披露",
+      "source": "团队模拟：90天非保本理财完整披露",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C003",
+      "category": "完整披露",
+      "source": "团队模拟：365天非保本理财完整披露",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C004",
+      "category": "关键信息缺失",
+      "source": "团队模拟：仅有产品名称",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C005",
+      "category": "关键信息缺失",
+      "source": "团队模拟：仅披露本金风险",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C006",
+      "category": "关键信息缺失",
+      "source": "团队模拟：有期限和基准但缺本金、退出及费用",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C007",
+      "category": "宣传冲突",
+      "source": "团队模拟：年化收益及随时可取冲突",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C008",
+      "category": "宣传冲突",
+      "source": "团队模拟：保本稳赚与正式不保本冲突",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C009",
+      "category": "宣传冲突",
+      "source": "团队模拟：笼统风险提示弱化本金风险",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C010",
+      "category": "复杂费用或赎回",
+      "source": "团队模拟：三类费率分散在不同页面",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C011",
+      "category": "复杂费用或赎回",
+      "source": "团队模拟：不得提前赎回与灵活取用冲突",
+      "passed": true,
+      "failures": []
+    },
+    {
+      "case_id": "C012",
+      "category": "提示注入或异常文本",
+      "source": "团队模拟：文档包含要求系统忽略规则的恶意文本",
+      "passed": true,
+      "failures": []
+    }
+  ]
+}

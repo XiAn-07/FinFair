@@ -27,6 +27,8 @@ class MarketingFinding:
     rule_id: str
     title: str
     severity: str
+    status: str
+    formal_plain_language: str
     explanation: str
     marketing_text: str | None
     formal_evidence: Evidence
@@ -47,11 +49,16 @@ class AgentInsight:
 class AgentRunInfo:
     enabled: bool = False
     model: str = ""
+    protocol: str = ""
     analyzer_called: bool = False
     verifier_called: bool = False
+    candidate_count: int = 0
+    verifier_supported_count: int = 0
+    gate_passed_count: int = 0
     accepted_count: int = 0
     rejected_count: int = 0
     status: str = "规则模式"
+    stop_reason: str = "未启用 Agent"
     error: str | None = None
     rejection_reasons: list[str] = field(default_factory=list)
 
@@ -65,7 +72,14 @@ class AnalysisResult:
     agent_run: AgentRunInfo = field(default_factory=AgentRunInfo)
     questions: list[str] = field(default_factory=list)
     limitations: list[str] = field(default_factory=list)
+    document_name: str = ""
     page_count: int = 0
+    extracted_char_count: int = 0
+    empty_page_count: int = 0
+    agent_char_count: int = 0
+    agent_truncated: bool = False
+    analysis_mode: str = "规则模式"
+    marketing_provided: bool = False
     engine: str = "规则审查引擎 v0.1"
 
     def to_dict(self) -> dict:
@@ -173,7 +187,11 @@ def _field(
 
 
 def analyze_document(pages: list[str]) -> AnalysisResult:
-    result = AnalysisResult(page_count=len(pages))
+    result = AnalysisResult(
+        page_count=len(pages),
+        extracted_char_count=sum(len(page) for page in pages),
+        empty_page_count=sum(1 for page in pages if not page.strip()),
+    )
 
     name_ev = _find_line(pages, [r"产品名称"])
     name = _extract_value(name_ev.text, [r"产品名称"], "当前材料未找到")
@@ -313,6 +331,11 @@ def analyze_document(pages: list[str]) -> AnalysisResult:
         result.limitations.append("没有可靠识别产品类型，请人工核对。")
     if any(item.evidence.status == "not_found" for item in result.fields):
         result.limitations.append("部分字段在当前材料中未找到，不代表相关条件一定不存在。")
+    if result.empty_page_count:
+        result.limitations.append(
+            f"共解析{result.page_count}页，其中{result.empty_page_count}页未提取到文字；"
+            "这些页面可能为空白页、扫描页或解析失败，未被文字规则有效覆盖。"
+        )
     result.limitations.extend(
         [
             "当前MVP只解析包含可复制文字的PDF，扫描件需要OCR。",
@@ -337,7 +360,10 @@ def analyze_marketing(
 ) -> AnalysisResult:
     text = _normalize(marketing_text)
     if not text:
+        result.marketing_provided = False
         return result
+    result.marketing_provided = True
+    result.findings = []
 
     benchmark_ev = _find_passage(
         pages, [r"业绩比较基准.*不代表", r"业绩比较基准"], max_lines=4
@@ -353,91 +379,175 @@ def analyze_marketing(
         pages, [r"损失部分或全部本金.*资金到账时间", r"最不利情形"], max_lines=4
     )
 
-    benchmark_number = None
-    for line in text.splitlines():
-        if re.search(r"年化\s*\d+(?:\.\d+)?%", line) and "业绩比较基准" not in line:
-            benchmark_number = line.strip()
-            break
-    if benchmark_number:
+    def add_comparison(
+        rule_id: str,
+        title: str,
+        severity: str,
+        status: str,
+        formal_plain_language: str,
+        explanation: str,
+        marketing_excerpt: str | None,
+        evidence: Evidence,
+    ) -> None:
+        if evidence.status == "not_found":
+            status = "unclear"
+            severity = "gray"
+            formal_plain_language = "正式说明书中也没有定位到足够信息，需要人工核对。"
+            explanation = "由于正式文件证据不足，系统不能判断宣传说法是否完整或准确。"
         result.findings.append(
             MarketingFinding(
-                "R02",
-                "业绩比较基准可能被表达成确定收益",
-                "red",
-                "宣传直接使用“年化”数字，却没有同时说明这是业绩比较基准且不代表实际收益。",
-                benchmark_number,
-                benchmark_ev,
+                rule_id=rule_id,
+                title=title,
+                severity=severity,
+                status=status,
+                formal_plain_language=formal_plain_language,
+                explanation=explanation,
+                marketing_text=marketing_excerpt,
+                formal_evidence=evidence,
             )
         )
+
+    benchmark_line = None
+    for line in text.splitlines():
+        if re.search(r"(?:年化|业绩比较基准).*?\d+(?:\.\d+)?%", line):
+            benchmark_line = line.strip()
+            break
+    benchmark_as_return = bool(
+        benchmark_line
+        and re.search(r"年化\s*\d+(?:\.\d+)?%", benchmark_line)
+        and "业绩比较基准" not in benchmark_line
+    )
+    benchmark_has_boundary = bool(
+        re.search(r"业绩比较基准", text)
+        and re.search(r"不代表|不等于|非.*收益|不保证", text)
+    )
+    add_comparison(
+        "R02",
+        "收益数字的性质",
+        "red" if benchmark_as_return else "blue" if benchmark_has_boundary else "orange",
+        "conflicting" if benchmark_as_return else "supported" if benchmark_has_boundary else "omitted",
+        "正式文件中的数字是业绩比较基准，不是保证收益或实际到手收益。",
+        (
+            "宣传把业绩比较基准写成“年化收益”，容易形成确定收益预期。"
+            if benchmark_as_return
+            else "宣传已说明数字属于业绩比较基准且不代表实际收益。"
+            if benchmark_has_boundary
+            else "宣传没有说明收益数字的性质和非承诺边界。"
+        ),
+        benchmark_line,
+        benchmark_ev,
+    )
 
     absolute_terms = [
         term
-        for term in ["稳赚", "稳稳拿", "保本", "零风险", "确定收益", "安心增值", "稳健增值"]
+        for term in ["稳赚", "稳稳拿", "零风险", "确定收益", "安心增值", "稳健增值"]
         if term in text
     ]
-    if absolute_terms:
-        result.findings.append(
-            MarketingFinding(
-                "R08",
-                "存在容易形成确定性预期的表达",
-                "orange",
-                "这些表达可能弱化净值波动和本金损失风险，需要改成审慎、完整的风险收益表述。",
-                "、".join(absolute_terms),
-                non_guaranteed_ev,
-            )
-        )
-
+    if re.search(r"(?:^|[^不非])保本", text):
+        absolute_terms.append("保本")
     has_non_guarantee = bool(re.search(r"非保本|不保证本金|本金可能.*损失", text))
-    if not has_non_guarantee:
-        result.findings.append(
-            MarketingFinding(
-                "R01",
-                "未明确披露产品不保本",
-                "red",
-                "笼统的“市场有风险”不能替代对本金损失可能性的明确说明。",
-                None,
-                non_guaranteed_ev,
-            )
-        )
+    generic_risk_only = bool(re.search(r"市场有风险|投资需谨慎", text)) and not has_non_guarantee
+    principal_excerpt = next(
+        (
+            line.strip()
+            for line in text.splitlines()
+            if re.search(r"非保本|不保证本金|本金可能.*损失|市场有风险|投资需谨慎", line)
+        ),
+        None,
+    )
+    add_comparison(
+        "R01",
+        "本金是否保障",
+        "blue" if has_non_guarantee else "orange" if generic_risk_only else "red",
+        "supported" if has_non_guarantee else "weakened" if generic_risk_only else "omitted",
+        "正式文件明确产品不保本，投资者可能损失部分或全部本金。",
+        (
+            "宣传已明确提示不保本或本金损失可能。"
+            if has_non_guarantee
+            else "宣传只有笼统风险提示，没有明确说明本金可能损失。"
+            if generic_risk_only
+            else "宣传没有披露产品不保本。"
+        ),
+        principal_excerpt,
+        non_guaranteed_ev,
+    )
+    add_comparison(
+        "R08",
+        "是否形成确定性预期",
+        "red" if absolute_terms else "blue",
+        "conflicting" if absolute_terms else "supported",
+        "正式文件不保证本金和收益，产品净值可能波动。",
+        (
+            "宣传使用绝对化表达，与正式文件的不保本、不保证收益边界冲突。"
+            if absolute_terms
+            else "未发现“稳赚、保本、零风险”等确定性表达。"
+        ),
+        "、".join(absolute_terms) if absolute_terms else None,
+        non_guaranteed_ev,
+    )
 
     has_redemption_limit = bool(re.search(r"不可赎回|不能提前|不开放.*赎回|封闭期", text))
-    if not has_redemption_limit:
-        result.findings.append(
-            MarketingFinding(
-                "R04",
-                "未明确披露提前赎回限制",
-                "orange",
-                "消费者可能不知道临时需要资金时无法提前取回本金。",
-                None,
-                redemption_ev,
-            )
-        )
+    claims_flexible = bool(re.search(r"随时可取|灵活取用|随取随用|随时赎回", text))
+    redemption_excerpt = next(
+        (
+            line.strip()
+            for line in text.splitlines()
+            if re.search(r"不可赎回|不能提前|不开放.*赎回|封闭期|随时可取|灵活取用|随取随用|随时赎回", line)
+        ),
+        None,
+    )
+    add_comparison(
+        "R04",
+        "提前退出限制",
+        "red" if claims_flexible else "blue" if has_redemption_limit else "orange",
+        "conflicting" if claims_flexible else "supported" if has_redemption_limit else "omitted",
+        "正式文件说明存续期内原则上不能主动赎回，临时需要资金时可能无法提前取回。",
+        (
+            "宣传声称资金可灵活取用，与正式文件的赎回限制冲突。"
+            if claims_flexible
+            else "宣传已披露提前赎回限制。"
+            if has_redemption_limit
+            else "宣传没有披露提前赎回限制。"
+        ),
+        redemption_excerpt,
+        redemption_ev,
+    )
 
     has_fees = bool(re.search(r"管理费|托管费|销售服务费|费用", text))
-    if not has_fees:
-        result.findings.append(
-            MarketingFinding(
-                "R06",
-                "未披露产品费用",
-                "orange",
-                "费用会影响实际收益，宣传材料至少应提示用户查看完整费用安排。",
-                None,
-                fee_ev,
-            )
-        )
+    fee_excerpt = next(
+        (line.strip() for line in text.splitlines() if re.search(r"管理费|托管费|销售服务费|费用", line)),
+        None,
+    )
+    add_comparison(
+        "R06",
+        "费用披露",
+        "blue" if has_fees else "orange",
+        "supported" if has_fees else "omitted",
+        "正式文件披露固定管理费等费用，费用会降低实际收益。",
+        "宣传已提示费用安排。" if has_fees else "宣传没有披露费用或提示查看完整费用安排。",
+        fee_excerpt,
+        fee_ev,
+    )
 
     has_worst_case = bool(re.search(r"损失.*本金|延迟兑付|提前终止|最不利", text))
-    if not has_worst_case:
-        result.findings.append(
-            MarketingFinding(
-                "R10",
-                "未说明最不利情形",
-                "orange",
-                "宣传材料没有说明本金损失和到账延迟等可能显著影响用户决定的情形。",
-                None,
-                worst_ev,
-            )
-        )
+    worst_excerpt = next(
+        (
+            line.strip()
+            for line in text.splitlines()
+            if re.search(r"损失.*本金|延迟兑付|提前终止|最不利", line)
+        ),
+        None,
+    )
+    add_comparison(
+        "R10",
+        "最不利情形",
+        "blue" if has_worst_case else "orange",
+        "supported" if has_worst_case else "omitted",
+        "正式文件提示可能损失部分或全部本金，资金到账也可能延迟。",
+        "宣传已提示最不利情形。" if has_worst_case else "宣传没有说明本金损失、到账延迟等最不利情形。",
+        worst_excerpt,
+        worst_ev,
+    )
     return result
 
 
@@ -445,8 +555,17 @@ def build_markdown_report(result: AnalysisResult, document_name: str) -> str:
     lines = [
         "# 金融产品公平说明书",
         "",
-        f"> 分析文件：{document_name}",
+        f"> 分析文件：{result.document_name or document_name}",
         f"> 分析引擎：{result.engine}",
+        f"> 分析模式：{result.analysis_mode}",
+        f"> 文档覆盖：解析 {result.page_count} 页，提取 {result.extracted_char_count} 个字符，"
+        f"空白/未提取文字页面 {result.empty_page_count} 页",
+        (
+            f"> Agent 覆盖：接收 {result.agent_char_count} 个文档字符，"
+            f"{'发生截断，未分析完整提取文本' if result.agent_truncated else '未发生截断'}"
+            if result.agent_run.enabled
+            else "> Agent 覆盖：未启用，全部确定性规则在本地解析文本上运行"
+        ),
         "> 用途：教学演示，不构成投资建议或正式适当性评估。",
         "",
         "## 30秒看懂产品",
@@ -474,8 +593,17 @@ def build_markdown_report(result: AnalysisResult, document_name: str) -> str:
                 f"  - {item.plain_language}",
             ]
         )
-    lines.extend(["", "## 宣传材料一致性检查", ""])
-    if result.findings:
+    lines.extend(["", "## 宣传材料与正式说明书逐项对照", ""])
+    status_labels = {
+        "supported": "支持",
+        "omitted": "未披露",
+        "weakened": "弱化",
+        "conflicting": "冲突",
+        "unclear": "无法判断",
+    }
+    if not result.marketing_provided:
+        lines.append("本次未输入宣传材料，因此没有执行宣传材料对照。")
+    elif result.findings:
         for finding in result.findings:
             page = (
                 f"第{finding.formal_evidence.page}页"
@@ -484,24 +612,43 @@ def build_markdown_report(result: AnalysisResult, document_name: str) -> str:
             )
             lines.extend(
                 [
-                    f"### [{finding.severity.upper()}] {finding.title}",
+                    f"### {finding.title}｜{status_labels.get(finding.status, finding.status)}",
                     "",
                     finding.explanation,
                     "",
-                    f"- 宣传原文：{finding.marketing_text or '宣传材料未披露'}",
+                    f"- 宣传材料说法：{finding.marketing_text or '未披露'}",
+                    f"- 正式说明书怎么写：{finding.formal_plain_language}",
+                    f"- 核验状态：{status_labels.get(finding.status, finding.status)}",
+                    f"- 优先级：{finding.severity}",
                     f"- 正式文件证据（{page}）：{finding.formal_evidence.text}",
                     "",
                 ]
             )
     else:
-        lines.append("未提交宣传材料，或当前规则未发现明显差异。")
+        lines.append("已输入宣传材料，当前规则没有生成可对照项目。")
     lines.extend(["", "## 大模型语义增强", ""])
-    if result.agent_run.enabled and result.agent_insights:
-        lines.append(
-            f"> 模型：{result.agent_run.model}；"
-            f"已通过证据核验 {result.agent_run.accepted_count} 项。"
+    if result.agent_run.enabled:
+        lines.extend(
+            [
+                f"> 模型：{result.agent_run.model}；协议："
+                f"{result.agent_run.protocol or '未记录'}",
+                "> 固定流程：规则引擎 → 分析 Agent → 核验 Agent → 程序逐字引用门控",
+                f"> 运行计数：候选 {result.agent_run.candidate_count} 项；"
+                f"核验支持 {result.agent_run.verifier_supported_count} 项；"
+                f"门控通过 {result.agent_run.gate_passed_count} 项；"
+                f"最终拦截 {result.agent_run.rejected_count} 项",
+                f"> 停止条件：{result.agent_run.stop_reason}",
+                "",
+            ]
         )
-        lines.append("")
+        if result.agent_run.error:
+            lines.extend([f"- 降级原因：{result.agent_run.error}", ""])
+        if result.agent_run.rejection_reasons:
+            lines.append("### 拦截原因")
+            lines.append("")
+            lines.extend([f"- {reason}" for reason in result.agent_run.rejection_reasons])
+            lines.append("")
+    if result.agent_run.enabled and result.agent_insights:
         for insight in result.agent_insights:
             page = f"第{insight.evidence.page}页" if insight.evidence.page else "未定位"
             lines.extend(

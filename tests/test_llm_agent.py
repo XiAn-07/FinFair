@@ -1,7 +1,16 @@
 import json
 
+import pytest
+
 from finfair.core import AnalysisResult
-from finfair.llm_agent import LLMConfig, _chat, _endpoint, run_hybrid_agents
+from finfair.llm_agent import (
+    AgentAPIError,
+    LLMConfig,
+    _chat,
+    _document_text,
+    _endpoint,
+    run_hybrid_agents,
+)
 from finfair.llm_agent import _quote_is_on_page
 
 
@@ -63,6 +72,46 @@ def test_quote_gate_allows_only_layout_punctuation_differences():
     assert not _quote_is_on_page("固定管理费0.20%/年", 1, pages)
 
 
+def test_document_text_reports_truncation():
+    text, used, truncated = _document_text(["A" * 30_000, "B" * 30_000])
+
+    assert truncated is True
+    assert used == 45_000
+    assert len(text) == 45_000
+    assert "A" in text and "B" in text
+
+
+def test_agent_failure_preserves_rule_coverage(monkeypatch):
+    result = AnalysisResult(
+        page_count=2,
+        extracted_char_count=12,
+        empty_page_count=1,
+    )
+    monkeypatch.setattr(
+        "finfair.llm_agent._chat",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AgentAPIError("模拟失败")),
+    )
+
+    with pytest.raises(AgentAPIError, match="模拟失败"):
+        run_hybrid_agents(
+            ["第一页面", "第二页面"],
+            "",
+            result,
+            LLMConfig(
+                api_key="test-key",
+                base_url="https://example.com/v1",
+                model="test-model",
+            ),
+        )
+
+    assert result.page_count == 2
+    assert result.extracted_char_count == 12
+    assert result.empty_page_count == 1
+    assert result.agent_run.enabled is True
+    assert result.analysis_mode == "混合 Agent"
+    assert result.agent_char_count > 0
+
+
 def test_two_agent_calls_and_exact_quote_gate(monkeypatch):
     pages = ["本产品不保证本金和收益。另有一项重要但容易忽略的条件。"]
     responses = iter(
@@ -118,7 +167,45 @@ def test_two_agent_calls_and_exact_quote_gate(monkeypatch):
 
     assert result.agent_run.analyzer_called is True
     assert result.agent_run.verifier_called is True
+    assert result.agent_run.protocol == "openai_compatible"
+    assert result.agent_run.candidate_count == 2
+    assert result.agent_run.verifier_supported_count == 2
+    assert result.agent_run.gate_passed_count == 1
     assert result.agent_run.accepted_count == 1
     assert result.agent_run.rejected_count == 1
     assert result.agent_run.rejection_reasons == ["A2：引文无法在第1页逐字定位"]
+    assert result.agent_run.stop_reason == "证据核验与程序门控完成，按固定两阶段流程停止"
     assert result.agent_insights[0].insight_id == "A1"
+
+
+def test_no_candidates_still_runs_fixed_verification_stage(monkeypatch):
+    calls = []
+    responses = iter(
+        [
+            json.dumps({"insights": []}),
+            json.dumps({"verification": []}),
+        ]
+    )
+
+    def fake_chat(*_args, **_kwargs):
+        calls.append("called")
+        return next(responses)
+
+    monkeypatch.setattr("finfair.llm_agent._chat", fake_chat)
+    result = run_hybrid_agents(
+        ["本产品不保证本金和收益。"],
+        "",
+        AnalysisResult(),
+        LLMConfig(
+            api_key="test-key",
+            base_url="https://example.com/v1",
+            model="test-model",
+        ),
+    )
+
+    assert len(calls) == 2
+    assert result.agent_run.candidate_count == 0
+    assert result.agent_run.verifier_supported_count == 0
+    assert result.agent_run.gate_passed_count == 0
+    assert result.agent_run.rejected_count == 0
+    assert result.agent_run.stop_reason == "分析 Agent 未提出候选，按固定流程停止"

@@ -1,7 +1,17 @@
 import json
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
-from finfair import analyze_document, analyze_marketing, extract_pdf_pages
+import pytest
+
+from finfair import (
+    analyze_document,
+    analyze_marketing,
+    build_markdown_report,
+    extract_pdf_pages,
+)
+from finfair.report_export import build_docx_report, build_pdf_report
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,10 +80,120 @@ def test_missing_fields_are_marked_for_review():
     assert any("部分字段" in item for item in result.limitations)
 
 
+def test_document_coverage_counts_empty_pages():
+    pages = ["第一页文字", "", "第三页文字"]
+    result = analyze_document(pages)
+
+    assert result.page_count == 3
+    assert result.extracted_char_count == len("第一页文字") + len("第三页文字")
+    assert result.empty_page_count == 1
+    assert any("1页未提取到文字" in item for item in result.limitations)
+
+
+def test_all_empty_pdf_is_rejected(monkeypatch):
+    class FakePDF:
+        pages = [
+            SimpleNamespace(extract_text=lambda **_kwargs: ""),
+            SimpleNamespace(extract_text=lambda **_kwargs: None),
+        ]
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+    monkeypatch.setitem(
+        sys.modules, "pdfplumber", SimpleNamespace(open=lambda *_args, **_kwargs: FakePDF())
+    )
+    with pytest.raises(ValueError, match="没有提取到可用文字"):
+        extract_pdf_pages(b"fake-pdf")
+
+
 def test_conflicting_marketing_copy_is_flagged():
     result = analyze_document(_minimal_pages())
     result = analyze_marketing("保本稳赚，年化3.20%，随时可取。", _minimal_pages(), result)
-    rule_ids = {item.rule_id for item in result.findings}
+    findings = {item.rule_id: item for item in result.findings}
 
-    assert {"R01", "R02", "R08"} <= rule_ids
+    assert findings["R01"].status == "omitted"
+    assert findings["R02"].status == "conflicting"
+    assert findings["R04"].status == "conflicting"
+    assert findings["R08"].status == "conflicting"
     assert all(item.formal_evidence.page for item in result.findings)
+
+
+def test_consistent_marketing_is_marked_supported():
+    marketing = (
+        "本产品不保本，本金可能损失部分或全部。\n"
+        "业绩比较基准3.20%，不代表实际收益，也不保证收益。\n"
+        "封闭期内不能提前赎回。\n"
+        "产品收取固定管理费、托管费和销售服务费。\n"
+        "最不利情形可能损失全部本金，资金到账也可能延迟。"
+    )
+    result = analyze_marketing(
+        marketing, _minimal_pages(), analyze_document(_minimal_pages())
+    )
+
+    assert result.marketing_provided is True
+    assert len(result.findings) == 6
+    assert {item.status for item in result.findings} == {"supported"}
+
+
+def test_omission_and_conflict_are_distinct():
+    result = analyze_marketing(
+        "年化3.20%，灵活取用。",
+        _minimal_pages(),
+        analyze_document(_minimal_pages()),
+    )
+    findings = {item.rule_id: item for item in result.findings}
+
+    assert findings["R01"].status == "omitted"
+    assert findings["R02"].status == "conflicting"
+    assert findings["R04"].status == "conflicting"
+    assert findings["R06"].status == "omitted"
+    assert findings["R10"].status == "omitted"
+
+
+def test_formal_document_missing_evidence_is_unclear():
+    pages = ["产品名称 信息不足产品"]
+    result = analyze_marketing("稳健产品，欢迎了解。", pages, analyze_document(pages))
+
+    assert result.marketing_provided is True
+    assert all(item.status == "unclear" for item in result.findings)
+    assert all(item.formal_evidence.page is None for item in result.findings)
+
+
+def test_no_marketing_input_has_distinct_state():
+    result = analyze_marketing("", _minimal_pages(), analyze_document(_minimal_pages()))
+
+    assert result.marketing_provided is False
+    assert result.findings == []
+    report = build_markdown_report(result, "测试.pdf")
+    assert "未输入宣传材料" in report
+
+
+def test_four_report_formats_include_same_comparison_status():
+    result = analyze_marketing(
+        "年化3.20%，随时可取。",
+        _minimal_pages(),
+        analyze_document(_minimal_pages()),
+    )
+    result.document_name = "测试.pdf"
+
+    data = result.to_dict()
+    markdown = build_markdown_report(result, "测试.pdf")
+    assert any(item["status"] == "conflicting" for item in data["findings"])
+    assert "核验状态：冲突" in markdown
+    assert data["page_count"] == 3
+    assert data["extracted_char_count"] > 0
+    assert "文档覆盖：解析 3 页" in markdown
+    assert "Agent 覆盖：未启用" in markdown
+
+    __import__("pytest").importorskip("docx")
+    __import__("pytest").importorskip("reportlab")
+    docx_bytes = build_docx_report(result, "测试.pdf")
+    pdf_bytes = build_pdf_report(result, "测试.pdf")
+
+    assert len(docx_bytes) > 1_000
+    assert pdf_bytes.startswith(b"%PDF")
+    assert len(pdf_bytes) > 1_000
