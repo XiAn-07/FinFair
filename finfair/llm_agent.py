@@ -18,13 +18,16 @@ class LLMConfig:
     base_url: str
     model: str
     timeout_seconds: int = 90
+    protocol: str = "openai_compatible"
 
 
 class AgentAPIError(RuntimeError):
     pass
 
 
-def _endpoint(base_url: str) -> str:
+def _endpoint(base_url: str, protocol: str = "openai_compatible") -> str:
+    if protocol not in {"openai_compatible", "anthropic"}:
+        raise AgentAPIError("不支持的模型接口协议")
     url = base_url.strip().rstrip("/")
     if not url:
         raise AgentAPIError("Base URL不能为空")
@@ -45,25 +48,41 @@ def _endpoint(base_url: str) -> str:
             raise AgentAPIError("出于部署安全考虑，不允许访问本机或内网地址")
     except ValueError:
         pass
-    return url if url.endswith("/chat/completions") else f"{url}/chat/completions"
+    suffix = "/messages" if protocol == "anthropic" else "/chat/completions"
+    return url if url.endswith(suffix) else f"{url}{suffix}"
 
 
 def _chat(config: LLMConfig, system: str, user: str) -> str:
-    payload = {
-        "model": config.model,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "temperature": 0.1,
-    }
-    request = urllib.request.Request(
-        _endpoint(config.base_url),
-        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
-        headers={
+    if config.protocol == "anthropic":
+        payload = {
+            "model": config.model,
+            "max_tokens": 4096,
+            "system": system,
+            "messages": [{"role": "user", "content": user}],
+            "temperature": 0.1,
+        }
+        headers = {
+            "x-api-key": config.api_key,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+        }
+    else:
+        payload = {
+            "model": config.model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            "temperature": 0.1,
+        }
+        headers = {
             "Authorization": f"Bearer {config.api_key}",
             "Content-Type": "application/json",
-        },
+        }
+    request = urllib.request.Request(
+        _endpoint(config.base_url, config.protocol),
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers=headers,
         method="POST",
     )
     try:
@@ -77,9 +96,16 @@ def _chat(config: LLMConfig, system: str, user: str) -> str:
     except json.JSONDecodeError as exc:
         raise AgentAPIError("模型接口没有返回有效JSON") from exc
     try:
-        content = body["choices"][0]["message"]["content"]
+        if config.protocol == "anthropic":
+            content = "\n".join(
+                block["text"]
+                for block in body["content"]
+                if block.get("type") == "text" and block.get("text")
+            )
+        else:
+            content = body["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError) as exc:
-        raise AgentAPIError("模型接口返回结构不兼容Chat Completions格式") from exc
+        raise AgentAPIError("模型接口返回结构与所选协议不兼容") from exc
     if not isinstance(content, str) or not content.strip():
         raise AgentAPIError("模型返回了空内容")
     return content.strip()

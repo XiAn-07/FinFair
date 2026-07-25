@@ -100,19 +100,62 @@ with st.sidebar:
         value=False,
         help="启用后将调用语义分析Agent和证据核验Agent各一次。",
     )
-    provider = "阿里云百炼（国内）"
+    provider = "通义千问（阿里云百炼·国内）"
     saved_api_config = st.session_state.get("saved_api_config")
     if enable_agent:
         st.subheader("自行接入 API")
-        provider_options = [
-            "阿里云百炼（国内）",
-            "DeepSeek",
-            "自定义 OpenAI 兼容接口",
-        ]
+        presets = {
+            "通义千问（阿里云百炼·国内）": {
+                "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+                "model": "qwen3.7-plus",
+                "protocol": "openai_compatible",
+            },
+            "DeepSeek": {
+                "base_url": "https://api.deepseek.com",
+                "model": "deepseek-v4-flash",
+                "protocol": "openai_compatible",
+            },
+            "Kimi（月之暗面·国内）": {
+                "base_url": "https://api.moonshot.cn/v1",
+                "model": "kimi-k2.6",
+                "protocol": "openai_compatible",
+            },
+            "Grok（xAI）": {
+                "base_url": "https://api.x.ai/v1",
+                "model": "grok-4.5",
+                "protocol": "openai_compatible",
+            },
+            "Gemini（Google AI）": {
+                "base_url": "https://generativelanguage.googleapis.com/v1beta/openai",
+                "model": "gemini-3.6-flash",
+                "protocol": "openai_compatible",
+            },
+            "OpenAI": {
+                "base_url": "https://api.openai.com/v1",
+                "model": "gpt-5-mini",
+                "protocol": "openai_compatible",
+            },
+            "Claude（Anthropic 原生）": {
+                "base_url": "https://api.anthropic.com/v1",
+                "model": "claude-sonnet-5",
+                "protocol": "anthropic",
+            },
+            "自定义 OpenAI 兼容接口": {
+                "base_url": "",
+                "model": "",
+                "protocol": "openai_compatible",
+            },
+            "自定义 Anthropic 原生接口": {
+                "base_url": "",
+                "model": "",
+                "protocol": "anthropic",
+            },
+        }
+        provider_options = list(presets)
         saved_provider = (
             saved_api_config.get("provider")
             if saved_api_config
-            else "阿里云百炼（国内）"
+            else "通义千问（阿里云百炼·国内）"
         )
         provider = st.selectbox(
             "接口预设",
@@ -121,15 +164,10 @@ with st.sidebar:
             if saved_provider in provider_options
             else 0,
         )
-        presets = {
-            "阿里云百炼（国内）": (
-                "https://dashscope.aliyuncs.com/compatible-mode/v1",
-                "qwen-flash",
-            ),
-            "DeepSeek": ("https://api.deepseek.com", "deepseek-v4-flash"),
-            "自定义 OpenAI 兼容接口": ("", ""),
-        }
-        default_url, default_model = presets[provider]
+        selected_preset = presets[provider]
+        default_url = selected_preset["base_url"]
+        default_model = selected_preset["model"]
+        api_protocol = selected_preset["protocol"]
         existing_for_provider = (
             saved_api_config
             if saved_api_config and saved_api_config.get("provider") == provider
@@ -140,7 +178,11 @@ with st.sidebar:
                 "Base URL",
                 value=existing_for_provider.get("base_url", default_url),
                 placeholder="https://.../v1",
-                help="必须兼容 /chat/completions 接口。",
+                help=(
+                    "将调用原生 /messages 接口。"
+                    if api_protocol == "anthropic"
+                    else "将调用 OpenAI 兼容的 /chat/completions 接口。"
+                ),
             )
             api_model_input = st.text_input(
                 "模型名称",
@@ -178,6 +220,7 @@ with st.sidebar:
                     "base_url": api_base_url_input.strip(),
                     "model": api_model_input.strip(),
                     "api_key": api_key_input.strip(),
+                    "protocol": api_protocol,
                 }
                 st.rerun()
         saved_api_config = st.session_state.get("saved_api_config")
@@ -274,6 +317,9 @@ if analyze_clicked:
                             api_key=saved_api_config["api_key"],
                             base_url=saved_api_config["base_url"],
                             model=saved_api_config["model"],
+                            protocol=saved_api_config.get(
+                                "protocol", "openai_compatible"
+                            ),
                         ),
                     )
                     progress.progress(90, text="证据核验Agent和程序化引用校验已完成……")

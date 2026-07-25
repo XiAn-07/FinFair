@@ -1,7 +1,7 @@
 import json
 
 from finfair.core import AnalysisResult
-from finfair.llm_agent import LLMConfig, _endpoint, run_hybrid_agents
+from finfair.llm_agent import LLMConfig, _chat, _endpoint, run_hybrid_agents
 from finfair.llm_agent import _quote_is_on_page
 
 
@@ -11,6 +11,48 @@ def test_endpoint_rejects_local_network():
         assert False, "应拒绝非HTTPS本地地址"
     except Exception as exc:
         assert "HTTPS" in str(exc) or "内网" in str(exc)
+
+
+def test_anthropic_endpoint_and_native_response(monkeypatch):
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self):
+            return json.dumps(
+                {"content": [{"type": "text", "text": "Claude 返回成功"}]}
+            ).encode()
+
+    captured = {}
+
+    def fake_urlopen(request, timeout):
+        captured["url"] = request.full_url
+        captured["headers"] = dict(request.header_items())
+        captured["payload"] = json.loads(request.data.decode())
+        captured["timeout"] = timeout
+        return FakeResponse()
+
+    monkeypatch.setattr("finfair.llm_agent.urllib.request.urlopen", fake_urlopen)
+    output = _chat(
+        LLMConfig(
+            api_key="test-key",
+            base_url="https://api.anthropic.com/v1",
+            model="claude-sonnet-5",
+            protocol="anthropic",
+        ),
+        "system prompt",
+        "user prompt",
+    )
+
+    assert captured["url"] == "https://api.anthropic.com/v1/messages"
+    assert captured["headers"]["X-api-key"] == "test-key"
+    assert captured["headers"]["Anthropic-version"] == "2023-06-01"
+    assert captured["payload"]["system"] == "system prompt"
+    assert captured["payload"]["max_tokens"] == 4096
+    assert output == "Claude 返回成功"
 
 
 def test_quote_gate_allows_only_layout_punctuation_differences():
