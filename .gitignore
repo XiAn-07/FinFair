@@ -1,0 +1,13 @@
+.env
+.venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+uploads/
+reports/
+tmp/
+*.db
+/金融产品公平说明书 test*.md
+/金融产品公平说明书 test*.docx
+/金融产品公平说明书 test*.pdf

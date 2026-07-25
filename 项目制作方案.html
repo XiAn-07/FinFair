@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>项目制作方案.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*
+
+Arduino® Light Theme - Stefania Mellai <s.mellai@arduino.cc>
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #FFFFFF;
+}
+
+.hljs,
+.hljs-subst {
+  color: #434f54;
+}
+
+.hljs-keyword,
+.hljs-attribute,
+.hljs-selector-tag,
+.hljs-doctag,
+.hljs-name {
+  color: #00979D;
+}
+
+.hljs-built_in,
+.hljs-literal,
+.hljs-bullet,
+.hljs-code,
+.hljs-addition {
+  color: #D35400;
+}
+
+.hljs-regexp,
+.hljs-symbol,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-link,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #00979D;
+}
+
+.hljs-type,
+.hljs-string,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-quote,
+.hljs-template-tag,
+.hljs-deletion {
+  color: #005C5F;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #880000;
+  font-weight: bold;
+}
+
+.hljs-comment {
+  color: rgba(149,165,166,.8);
+}
+
+.hljs-meta-keyword {
+  color: #728E00;
+}
+
+.hljs-meta {
+  color: #434f54;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-function {
+  color: #728E00;
+}
+
+.hljs-number {
+  color: #8A7B52;  
+}
+
+</style>
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family:   "HelveticaNeue-Light", sans-serif, "宋体","Segoe WPC", "Segoe UI", "SFUIText-Light","Droid Sans Fallback";
+	font-size: 18px;
+	padding: 0 12px;
+	line-height: 1.6;
+	word-wrap: break-word;
+	color: #333333;
+}
+
+.content-wrapper{
+	max-width: 860px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom: 1px solid #eee;
+}
+
+
+h2{
+	padding-bottom: .3em;
+    font-size: 2em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+h3{
+	font-size: 1.75em;
+    line-height: 1.225;
+}
+
+h1, h2, h3 {
+	font-weight: bold;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Obsidian syntax defaults for legacy export (PDF / HTML / DOCX) */
+
+.callout {
+	--callout-accent: #0969da;
+	margin: 12px 0;
+	border-radius: 6px;
+	border-left: 4px solid var(--callout-accent);
+	background: rgba(9, 105, 218, 0.08);
+	color: #333333;
+	overflow: hidden;
+}
+
+.callout[data-callout="note"],
+.callout[data-callout="abstract"],
+.callout[data-callout="info"],
+.callout[data-callout="todo"],
+.callout[data-subtype="note"],
+.callout[data-subtype="abstract"],
+.callout[data-subtype="info"],
+.callout[data-subtype="todo"],
+.callout[data-callout="note" i],
+.callout[data-callout="abstract" i],
+.callout[data-callout="info" i],
+.callout[data-callout="todo" i],
+.callout[data-subtype="note" i],
+.callout[data-subtype="abstract" i],
+.callout[data-subtype="info" i],
+.callout[data-subtype="todo" i] {
+	--callout-accent: #0969da;
+	border-left-color: #0969da;
+	background: rgba(9, 105, 218, 0.08);
+}
+
+.callout[data-callout="tip"],
+.callout[data-callout="hint"],
+.callout[data-subtype="tip"],
+.callout[data-subtype="hint"],
+.callout[data-callout="tip" i],
+.callout[data-callout="hint" i],
+.callout[data-subtype="tip" i],
+.callout[data-subtype="hint" i] {
+	--callout-accent: #116329;
+	border-left-color: #116329;
+	background: rgba(17, 99, 41, 0.08);
+}
+
+.callout[data-callout="important"],
+.callout[data-subtype="important"],
+.callout[data-callout="important" i],
+.callout[data-subtype="important" i] {
+	--callout-accent: #8250df;
+	border-left-color: #8250df;
+	background: rgba(130, 80, 223, 0.08);
+}
+
+.callout[data-callout="warning"],
+.callout[data-subtype="warning"],
+.callout[data-callout="warning" i],
+.callout[data-subtype="warning" i] {
+	--callout-accent: #bc4c00;
+	border-left-color: #bc4c00;
+	background: rgba(188, 76, 0, 0.08);
+}
+
+.callout[data-callout="caution"],
+.callout[data-callout="danger"],
+.callout[data-callout="error"],
+.callout[data-callout="bug"],
+.callout[data-callout="fail"],
+.callout[data-subtype="caution"],
+.callout[data-subtype="danger"],
+.callout[data-subtype="error"],
+.callout[data-subtype="bug"],
+.callout[data-subtype="fail"],
+.callout[data-callout="caution" i],
+.callout[data-callout="danger" i],
+.callout[data-callout="error" i],
+.callout[data-callout="bug" i],
+.callout[data-callout="fail" i],
+.callout[data-subtype="caution" i],
+.callout[data-subtype="danger" i],
+.callout[data-subtype="error" i],
+.callout[data-subtype="bug" i],
+.callout[data-subtype="fail" i] {
+	--callout-accent: #cf222e;
+	border-left-color: #cf222e;
+	background: rgba(207, 34, 46, 0.08);
+}
+
+.callout[data-callout="question"],
+.callout[data-callout="help"],
+.callout[data-callout="faq"],
+.callout[data-subtype="question"],
+.callout[data-subtype="help"],
+.callout[data-subtype="faq"],
+.callout[data-callout="question" i],
+.callout[data-callout="help" i],
+.callout[data-callout="faq" i],
+.callout[data-subtype="question" i],
+.callout[data-subtype="help" i],
+.callout[data-subtype="faq" i] {
+	--callout-accent: #9a6700;
+	border-left-color: #9a6700;
+	background: rgba(154, 103, 0, 0.08);
+}
+
+.callout .callout-title,
+.callout .callout-info {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 14px 0;
+	margin-bottom: 10px;
+	color: var(--callout-accent);
+}
+
+.callout .callout-title-icon,
+.callout .callout-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+	color: var(--callout-accent);
+}
+
+.callout .callout-title-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.callout .callout-title-inner,
+.callout .callout-info > .callout-title {
+	font-weight: 700;
+	font-size: 0.95em;
+	line-height: 1.35;
+	color: var(--callout-accent);
+}
+
+.callout .callout-content {
+	padding: 6px 14px 12px;
+	color: #333333;
+}
+
+.callout .callout-content > :first-child {
+	margin-top: 0;
+}
+
+.callout .callout-content > :last-child {
+	margin-bottom: 0;
+}
+
+.obsidian-wikilink {
+	color: #7c3aed;
+	text-decoration: underline;
+}
+
+.obsidian-wikilink-embed {
+	display: inline-block;
+	padding: 2px 8px;
+	border: 1px dashed #d0d7de;
+	border-radius: 4px;
+	color: #7c3aed;
+}
+
+.obsidian-tag {
+	color: #7c3aed;
+	background: rgba(124, 58, 237, 0.12);
+	border-radius: 4px;
+	padding: 0 4px;
+}
+
+mark {
+	background: rgba(154, 103, 0, 0.35);
+	color: inherit;
+	padding: 0 2px;
+	border-radius: 2px;
+}
+
+[data-type="yaml-front-matter"] {
+	margin: 0 0 16px;
+}
+
+.vditor-properties {
+	border: 1px solid #d0d7de;
+	border-radius: 8px;
+	background: #f6f8fa;
+	overflow: hidden;
+}
+
+.vditor-properties__heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	border-bottom: 1px solid #d0d7de;
+	background: #f3f4f6;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #6b7280;
+}
+
+.vditor-properties__heading-icon::before {
+	content: "☰";
+	opacity: 0.75;
+}
+
+.vditor-properties__table {
+	display: flex;
+	flex-direction: column;
+}
+
+.vditor-properties__row {
+	display: grid;
+	grid-template-columns: minmax(120px, 34%) 1fr;
+	gap: 8px 12px;
+	align-items: start;
+	padding: 8px 12px;
+	border-top: 1px solid rgba(208, 215, 222, 0.45);
+}
+
+.vditor-properties__row:first-child {
+	border-top: none;
+}
+
+.vditor-properties__key {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+	color: #6b7280;
+	font-size: 0.85rem;
+}
+
+.vditor-properties__key-icon {
+	flex-shrink: 0;
+	width: 14px;
+	height: 14px;
+	opacity: 0.72;
+	text-align: center;
+}
+
+.vditor-properties__key-icon[data-icon="tag"]::before { content: "#"; }
+.vditor-properties__key-icon[data-icon="alias"]::before { content: "⛓"; }
+.vditor-properties__key-icon[data-icon="date"]::before { content: "📅"; }
+.vditor-properties__key-icon[data-icon="toggle"]::before { content: "◉"; }
+.vditor-properties__key-icon[data-icon="number"]::before { content: "#"; }
+.vditor-properties__key-icon[data-icon="list"]::before { content: "≡"; }
+.vditor-properties__key-icon[data-icon="text"]::before { content: "T"; }
+
+.vditor-properties__key-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.vditor-properties__value {
+	min-width: 0;
+	font-size: 0.92rem;
+	color: #333333;
+	word-break: break-word;
+}
+
+.vditor-properties__value--tags,
+.vditor-properties__value--aliases {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.vditor-properties__value--aliases {
+	gap: 6px;
+}
+
+.vditor-properties__list {
+	margin: 0;
+	padding-left: 1.1rem;
+}
+
+.vditor-properties__checkbox {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-right: 6px;
+	border: 1px solid #d0d7de;
+	border-radius: 3px;
+	vertical-align: -2px;
+	background: #ffffff;
+}
+
+.vditor-properties__checkbox[is-checked="true"] {
+	background: #7c3aed;
+	border-color: #7c3aed;
+	box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+.vditor-properties__empty {
+	opacity: 0.45;
+}
+
+</style>
+
+<style>
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+.table-of-contents li{
+	list-style-type: initial;
+}
+
+</style>
+
+<style>
+@font-face{font-display:block;font-family:KaTeX_AMS;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_AMS-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_AMS-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_AMS-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Caligraphic;font-style:normal;font-weight:700;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Caligraphic-Bold.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Caligraphic-Bold.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Caligraphic-Bold.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Caligraphic;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Caligraphic-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Caligraphic-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Caligraphic-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Fraktur;font-style:normal;font-weight:700;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Fraktur-Bold.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Fraktur-Bold.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Fraktur-Bold.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Fraktur;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Fraktur-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Fraktur-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Fraktur-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:normal;font-weight:700;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Bold.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Bold.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Bold.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:italic;font-weight:700;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-BoldItalic.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-BoldItalic.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-BoldItalic.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:italic;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Italic.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Italic.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Italic.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Main;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Main-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Math;font-style:italic;font-weight:700;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Math-BoldItalic.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Math-BoldItalic.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Math-BoldItalic.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Math;font-style:italic;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Math-Italic.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Math-Italic.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Math-Italic.ttf") format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:normal;font-weight:700;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Bold.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Bold.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Bold.ttf") format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:italic;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Italic.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Italic.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Italic.ttf") format("truetype")}@font-face{font-display:block;font-family:"KaTeX_SansSerif";font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_SansSerif-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Script;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Script-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Script-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Script-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size1;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size1-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size1-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size1-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size2;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size2-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size2-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size2-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size3;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size3-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size3-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size3-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Size4;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size4-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size4-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Size4-Regular.ttf") format("truetype")}@font-face{font-display:block;font-family:KaTeX_Typewriter;font-style:normal;font-weight:400;src:url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Typewriter-Regular.woff2") format("woff2"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Typewriter-Regular.woff") format("woff"),url("https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/fonts/KaTeX_Typewriter-Regular.ttf") format("truetype")}.katex{font:normal 1.21em KaTeX_Main,Times New Roman,serif;line-height:1.2;position:relative;text-indent:0;text-rendering:auto}.katex *{-ms-high-contrast-adjust:none!important;border-color:currentColor}.katex .katex-version:after{content:"0.16.47"}.katex .katex-mathml{border:0;-webkit-clip-path:inset(50%);clip-path:inset(50%);height:1px;overflow:hidden;padding:0;position:absolute;width:1px}.katex .katex-html>.newline{display:block}.katex .base{position:relative;white-space:nowrap;width:-webkit-min-content;width:-moz-min-content;width:min-content}.katex .base,.katex .strut{display:inline-block}.katex .textbf{font-weight:700}.katex .textit{font-style:italic}.katex .textrm{font-family:KaTeX_Main}.katex .textsf{font-family:KaTeX_SansSerif}.katex .texttt{font-family:KaTeX_Typewriter}.katex .mathnormal{font-family:KaTeX_Math;font-style:italic}.katex .mathit{font-family:KaTeX_Main;font-style:italic}.katex .mathrm{font-style:normal}.katex .mathbf{font-family:KaTeX_Main;font-weight:700}.katex .boldsymbol{font-family:KaTeX_Math;font-style:italic;font-weight:700}.katex .amsrm,.katex .mathbb,.katex .textbb{font-family:KaTeX_AMS}.katex .mathcal{font-family:KaTeX_Caligraphic}.katex .mathfrak,.katex .textfrak{font-family:KaTeX_Fraktur}.katex .mathboldfrak,.katex .textboldfrak{font-family:KaTeX_Fraktur;font-weight:700}.katex .mathtt{font-family:KaTeX_Typewriter}.katex .mathscr,.katex .textscr{font-family:KaTeX_Script}.katex .mathsf,.katex .textsf{font-family:KaTeX_SansSerif}.katex .mathboldsf,.katex .textboldsf{font-family:KaTeX_SansSerif;font-weight:700}.katex .mathitsf,.katex .mathsfit,.katex .textitsf{font-family:KaTeX_SansSerif;font-style:italic}.katex .mainrm{font-family:KaTeX_Main;font-style:normal}.katex .vlist-t{border-collapse:collapse;display:inline-table;table-layout:fixed}.katex .vlist-r{display:table-row}.katex .vlist{display:table-cell;position:relative;vertical-align:bottom}.katex .vlist>span{display:block;height:0;position:relative}.katex .vlist>span>span{display:inline-block}.katex .vlist>span>.pstrut{overflow:hidden;width:0}.katex .vlist-t2{margin-right:-2px}.katex .vlist-s{display:table-cell;font-size:1px;min-width:2px;vertical-align:bottom;width:2px}.katex .vbox{align-items:baseline;display:inline-flex;flex-direction:column}.katex .hbox{width:100%}.katex .hbox,.katex .thinbox{display:inline-flex;flex-direction:row}.katex .thinbox{max-width:0;width:0}.katex .msupsub{text-align:left}.katex .mfrac>span>span{text-align:center}.katex .mfrac .frac-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .hdashline,.katex .hline,.katex .mfrac .frac-line,.katex .overline .overline-line,.katex .rule,.katex .underline .underline-line{min-height:1px}.katex .mspace{display:inline-block}.katex .smash{display:inline;line-height:0}.katex .clap,.katex .llap,.katex .rlap{position:relative;width:0}.katex .clap>.inner,.katex .llap>.inner,.katex .rlap>.inner{position:absolute}.katex .clap>.fix,.katex .llap>.fix,.katex .rlap>.fix{display:inline-block}.katex .llap>.inner{right:0}.katex .clap>.inner,.katex .rlap>.inner{left:0}.katex .clap>.inner>span{margin-left:-50%;margin-right:50%}.katex .rule{border:0 solid;display:inline-block;position:relative}.katex .hline,.katex .overline .overline-line,.katex .underline .underline-line{border-bottom-style:solid;display:inline-block;width:100%}.katex .hdashline{border-bottom-style:dashed;display:inline-block;width:100%}.katex .sqrt>.root{margin-left:.2777777778em;margin-right:-.5555555556em}.katex .fontsize-ensurer.reset-size1.size1,.katex .sizing.reset-size1.size1{font-size:1em}.katex .fontsize-ensurer.reset-size1.size2,.katex .sizing.reset-size1.size2{font-size:1.2em}.katex .fontsize-ensurer.reset-size1.size3,.katex .sizing.reset-size1.size3{font-size:1.4em}.katex .fontsize-ensurer.reset-size1.size4,.katex .sizing.reset-size1.size4{font-size:1.6em}.katex .fontsize-ensurer.reset-size1.size5,.katex .sizing.reset-size1.size5{font-size:1.8em}.katex .fontsize-ensurer.reset-size1.size6,.katex .sizing.reset-size1.size6{font-size:2em}.katex .fontsize-ensurer.reset-size1.size7,.katex .sizing.reset-size1.size7{font-size:2.4em}.katex .fontsize-ensurer.reset-size1.size8,.katex .sizing.reset-size1.size8{font-size:2.88em}.katex .fontsize-ensurer.reset-size1.size9,.katex .sizing.reset-size1.size9{font-size:3.456em}.katex .fontsize-ensurer.reset-size1.size10,.katex .sizing.reset-size1.size10{font-size:4.148em}.katex .fontsize-ensurer.reset-size1.size11,.katex .sizing.reset-size1.size11{font-size:4.976em}.katex .fontsize-ensurer.reset-size2.size1,.katex .sizing.reset-size2.size1{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size2.size2,.katex .sizing.reset-size2.size2{font-size:1em}.katex .fontsize-ensurer.reset-size2.size3,.katex .sizing.reset-size2.size3{font-size:1.1666666667em}.katex .fontsize-ensurer.reset-size2.size4,.katex .sizing.reset-size2.size4{font-size:1.3333333333em}.katex .fontsize-ensurer.reset-size2.size5,.katex .sizing.reset-size2.size5{font-size:1.5em}.katex .fontsize-ensurer.reset-size2.size6,.katex .sizing.reset-size2.size6{font-size:1.6666666667em}.katex .fontsize-ensurer.reset-size2.size7,.katex .sizing.reset-size2.size7{font-size:2em}.katex .fontsize-ensurer.reset-size2.size8,.katex .sizing.reset-size2.size8{font-size:2.4em}.katex .fontsize-ensurer.reset-size2.size9,.katex .sizing.reset-size2.size9{font-size:2.88em}.katex .fontsize-ensurer.reset-size2.size10,.katex .sizing.reset-size2.size10{font-size:3.4566666667em}.katex .fontsize-ensurer.reset-size2.size11,.katex .sizing.reset-size2.size11{font-size:4.1466666667em}.katex .fontsize-ensurer.reset-size3.size1,.katex .sizing.reset-size3.size1{font-size:.7142857143em}.katex .fontsize-ensurer.reset-size3.size2,.katex .sizing.reset-size3.size2{font-size:.8571428571em}.katex .fontsize-ensurer.reset-size3.size3,.katex .sizing.reset-size3.size3{font-size:1em}.katex .fontsize-ensurer.reset-size3.size4,.katex .sizing.reset-size3.size4{font-size:1.1428571429em}.katex .fontsize-ensurer.reset-size3.size5,.katex .sizing.reset-size3.size5{font-size:1.2857142857em}.katex .fontsize-ensurer.reset-size3.size6,.katex .sizing.reset-size3.size6{font-size:1.4285714286em}.katex .fontsize-ensurer.reset-size3.size7,.katex .sizing.reset-size3.size7{font-size:1.7142857143em}.katex .fontsize-ensurer.reset-size3.size8,.katex .sizing.reset-size3.size8{font-size:2.0571428571em}.katex .fontsize-ensurer.reset-size3.size9,.katex .sizing.reset-size3.size9{font-size:2.4685714286em}.katex .fontsize-ensurer.reset-size3.size10,.katex .sizing.reset-size3.size10{font-size:2.9628571429em}.katex .fontsize-ensurer.reset-size3.size11,.katex .sizing.reset-size3.size11{font-size:3.5542857143em}.katex .fontsize-ensurer.reset-size4.size1,.katex .sizing.reset-size4.size1{font-size:.625em}.katex .fontsize-ensurer.reset-size4.size2,.katex .sizing.reset-size4.size2{font-size:.75em}.katex .fontsize-ensurer.reset-size4.size3,.katex .sizing.reset-size4.size3{font-size:.875em}.katex .fontsize-ensurer.reset-size4.size4,.katex .sizing.reset-size4.size4{font-size:1em}.katex .fontsize-ensurer.reset-size4.size5,.katex .sizing.reset-size4.size5{font-size:1.125em}.katex .fontsize-ensurer.reset-size4.size6,.katex .sizing.reset-size4.size6{font-size:1.25em}.katex .fontsize-ensurer.reset-size4.size7,.katex .sizing.reset-size4.size7{font-size:1.5em}.katex .fontsize-ensurer.reset-size4.size8,.katex .sizing.reset-size4.size8{font-size:1.8em}.katex .fontsize-ensurer.reset-size4.size9,.katex .sizing.reset-size4.size9{font-size:2.16em}.katex .fontsize-ensurer.reset-size4.size10,.katex .sizing.reset-size4.size10{font-size:2.5925em}.katex .fontsize-ensurer.reset-size4.size11,.katex .sizing.reset-size4.size11{font-size:3.11em}.katex .fontsize-ensurer.reset-size5.size1,.katex .sizing.reset-size5.size1{font-size:.5555555556em}.katex .fontsize-ensurer.reset-size5.size2,.katex .sizing.reset-size5.size2{font-size:.6666666667em}.katex .fontsize-ensurer.reset-size5.size3,.katex .sizing.reset-size5.size3{font-size:.7777777778em}.katex .fontsize-ensurer.reset-size5.size4,.katex .sizing.reset-size5.size4{font-size:.8888888889em}.katex .fontsize-ensurer.reset-size5.size5,.katex .sizing.reset-size5.size5{font-size:1em}.katex .fontsize-ensurer.reset-size5.size6,.katex .sizing.reset-size5.size6{font-size:1.1111111111em}.katex .fontsize-ensurer.reset-size5.size7,.katex .sizing.reset-size5.size7{font-size:1.3333333333em}.katex .fontsize-ensurer.reset-size5.size8,.katex .sizing.reset-size5.size8{font-size:1.6em}.katex .fontsize-ensurer.reset-size5.size9,.katex .sizing.reset-size5.size9{font-size:1.92em}.katex .fontsize-ensurer.reset-size5.size10,.katex .sizing.reset-size5.size10{font-size:2.3044444444em}.katex .fontsize-ensurer.reset-size5.size11,.katex .sizing.reset-size5.size11{font-size:2.7644444444em}.katex .fontsize-ensurer.reset-size6.size1,.katex .sizing.reset-size6.size1{font-size:.5em}.katex .fontsize-ensurer.reset-size6.size2,.katex .sizing.reset-size6.size2{font-size:.6em}.katex .fontsize-ensurer.reset-size6.size3,.katex .sizing.reset-size6.size3{font-size:.7em}.katex .fontsize-ensurer.reset-size6.size4,.katex .sizing.reset-size6.size4{font-size:.8em}.katex .fontsize-ensurer.reset-size6.size5,.katex .sizing.reset-size6.size5{font-size:.9em}.katex .fontsize-ensurer.reset-size6.size6,.katex .sizing.reset-size6.size6{font-size:1em}.katex .fontsize-ensurer.reset-size6.size7,.katex .sizing.reset-size6.size7{font-size:1.2em}.katex .fontsize-ensurer.reset-size6.size8,.katex .sizing.reset-size6.size8{font-size:1.44em}.katex .fontsize-ensurer.reset-size6.size9,.katex .sizing.reset-size6.size9{font-size:1.728em}.katex .fontsize-ensurer.reset-size6.size10,.katex .sizing.reset-size6.size10{font-size:2.074em}.katex .fontsize-ensurer.reset-size6.size11,.katex .sizing.reset-size6.size11{font-size:2.488em}.katex .fontsize-ensurer.reset-size7.size1,.katex .sizing.reset-size7.size1{font-size:.4166666667em}.katex .fontsize-ensurer.reset-size7.size2,.katex .sizing.reset-size7.size2{font-size:.5em}.katex .fontsize-ensurer.reset-size7.size3,.katex .sizing.reset-size7.size3{font-size:.5833333333em}.katex .fontsize-ensurer.reset-size7.size4,.katex .sizing.reset-size7.size4{font-size:.6666666667em}.katex .fontsize-ensurer.reset-size7.size5,.katex .sizing.reset-size7.size5{font-size:.75em}.katex .fontsize-ensurer.reset-size7.size6,.katex .sizing.reset-size7.size6{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size7.size7,.katex .sizing.reset-size7.size7{font-size:1em}.katex .fontsize-ensurer.reset-size7.size8,.katex .sizing.reset-size7.size8{font-size:1.2em}.katex .fontsize-ensurer.reset-size7.size9,.katex .sizing.reset-size7.size9{font-size:1.44em}.katex .fontsize-ensurer.reset-size7.size10,.katex .sizing.reset-size7.size10{font-size:1.7283333333em}.katex .fontsize-ensurer.reset-size7.size11,.katex .sizing.reset-size7.size11{font-size:2.0733333333em}.katex .fontsize-ensurer.reset-size8.size1,.katex .sizing.reset-size8.size1{font-size:.3472222222em}.katex .fontsize-ensurer.reset-size8.size2,.katex .sizing.reset-size8.size2{font-size:.4166666667em}.katex .fontsize-ensurer.reset-size8.size3,.katex .sizing.reset-size8.size3{font-size:.4861111111em}.katex .fontsize-ensurer.reset-size8.size4,.katex .sizing.reset-size8.size4{font-size:.5555555556em}.katex .fontsize-ensurer.reset-size8.size5,.katex .sizing.reset-size8.size5{font-size:.625em}.katex .fontsize-ensurer.reset-size8.size6,.katex .sizing.reset-size8.size6{font-size:.6944444444em}.katex .fontsize-ensurer.reset-size8.size7,.katex .sizing.reset-size8.size7{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size8.size8,.katex .sizing.reset-size8.size8{font-size:1em}.katex .fontsize-ensurer.reset-size8.size9,.katex .sizing.reset-size8.size9{font-size:1.2em}.katex .fontsize-ensurer.reset-size8.size10,.katex .sizing.reset-size8.size10{font-size:1.4402777778em}.katex .fontsize-ensurer.reset-size8.size11,.katex .sizing.reset-size8.size11{font-size:1.7277777778em}.katex .fontsize-ensurer.reset-size9.size1,.katex .sizing.reset-size9.size1{font-size:.2893518519em}.katex .fontsize-ensurer.reset-size9.size2,.katex .sizing.reset-size9.size2{font-size:.3472222222em}.katex .fontsize-ensurer.reset-size9.size3,.katex .sizing.reset-size9.size3{font-size:.4050925926em}.katex .fontsize-ensurer.reset-size9.size4,.katex .sizing.reset-size9.size4{font-size:.462962963em}.katex .fontsize-ensurer.reset-size9.size5,.katex .sizing.reset-size9.size5{font-size:.5208333333em}.katex .fontsize-ensurer.reset-size9.size6,.katex .sizing.reset-size9.size6{font-size:.5787037037em}.katex .fontsize-ensurer.reset-size9.size7,.katex .sizing.reset-size9.size7{font-size:.6944444444em}.katex .fontsize-ensurer.reset-size9.size8,.katex .sizing.reset-size9.size8{font-size:.8333333333em}.katex .fontsize-ensurer.reset-size9.size9,.katex .sizing.reset-size9.size9{font-size:1em}.katex .fontsize-ensurer.reset-size9.size10,.katex .sizing.reset-size9.size10{font-size:1.2002314815em}.katex .fontsize-ensurer.reset-size9.size11,.katex .sizing.reset-size9.size11{font-size:1.4398148148em}.katex .fontsize-ensurer.reset-size10.size1,.katex .sizing.reset-size10.size1{font-size:.2410800386em}.katex .fontsize-ensurer.reset-size10.size2,.katex .sizing.reset-size10.size2{font-size:.2892960463em}.katex .fontsize-ensurer.reset-size10.size3,.katex .sizing.reset-size10.size3{font-size:.337512054em}.katex .fontsize-ensurer.reset-size10.size4,.katex .sizing.reset-size10.size4{font-size:.3857280617em}.katex .fontsize-ensurer.reset-size10.size5,.katex .sizing.reset-size10.size5{font-size:.4339440694em}.katex .fontsize-ensurer.reset-size10.size6,.katex .sizing.reset-size10.size6{font-size:.4821600771em}.katex .fontsize-ensurer.reset-size10.size7,.katex .sizing.reset-size10.size7{font-size:.5785920926em}.katex .fontsize-ensurer.reset-size10.size8,.katex .sizing.reset-size10.size8{font-size:.6943105111em}.katex .fontsize-ensurer.reset-size10.size9,.katex .sizing.reset-size10.size9{font-size:.8331726133em}.katex .fontsize-ensurer.reset-size10.size10,.katex .sizing.reset-size10.size10{font-size:1em}.katex .fontsize-ensurer.reset-size10.size11,.katex .sizing.reset-size10.size11{font-size:1.1996142719em}.katex .fontsize-ensurer.reset-size11.size1,.katex .sizing.reset-size11.size1{font-size:.2009646302em}.katex .fontsize-ensurer.reset-size11.size2,.katex .sizing.reset-size11.size2{font-size:.2411575563em}.katex .fontsize-ensurer.reset-size11.size3,.katex .sizing.reset-size11.size3{font-size:.2813504823em}.katex .fontsize-ensurer.reset-size11.size4,.katex .sizing.reset-size11.size4{font-size:.3215434084em}.katex .fontsize-ensurer.reset-size11.size5,.katex .sizing.reset-size11.size5{font-size:.3617363344em}.katex .fontsize-ensurer.reset-size11.size6,.katex .sizing.reset-size11.size6{font-size:.4019292605em}.katex .fontsize-ensurer.reset-size11.size7,.katex .sizing.reset-size11.size7{font-size:.4823151125em}.katex .fontsize-ensurer.reset-size11.size8,.katex .sizing.reset-size11.size8{font-size:.578778135em}.katex .fontsize-ensurer.reset-size11.size9,.katex .sizing.reset-size11.size9{font-size:.6945337621em}.katex .fontsize-ensurer.reset-size11.size10,.katex .sizing.reset-size11.size10{font-size:.8336012862em}.katex .fontsize-ensurer.reset-size11.size11,.katex .sizing.reset-size11.size11{font-size:1em}.katex .delimsizing.size1{font-family:KaTeX_Size1}.katex .delimsizing.size2{font-family:KaTeX_Size2}.katex .delimsizing.size3{font-family:KaTeX_Size3}.katex .delimsizing.size4{font-family:KaTeX_Size4}.katex .delimsizing.mult .delim-size1>span{font-family:KaTeX_Size1}.katex .delimsizing.mult .delim-size4>span{font-family:KaTeX_Size4}.katex .nulldelimiter{display:inline-block;width:.12em}.katex .delimcenter,.katex .op-symbol{position:relative}.katex .op-symbol.small-op{font-family:KaTeX_Size1}.katex .op-symbol.large-op{font-family:KaTeX_Size2}.katex .accent>.vlist-t,.katex .op-limits>.vlist-t{text-align:center}.katex .accent .accent-body{position:relative}.katex .accent .accent-body:not(.accent-full){width:0}.katex .overlay{display:block}.katex .mtable .vertical-separator{display:inline-block;min-width:1px}.katex .mtable .arraycolsep{display:inline-block}.katex .mtable .col-align-c>.vlist-t{text-align:center}.katex .mtable .col-align-l>.vlist-t{text-align:left}.katex .mtable .col-align-r>.vlist-t{text-align:right}.katex .svg-align{text-align:left}.katex svg{fill:currentColor;stroke:currentColor;display:block;height:inherit;position:absolute;width:100%}.katex svg path{stroke:none}.katex svg{fill-rule:nonzero;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1}.katex img{border-style:none;max-height:none;max-width:none;min-height:0;min-width:0}.katex .stretchy{display:block;overflow:hidden;position:relative;width:100%}.katex .stretchy:after,.katex .stretchy:before{content:""}.katex .hide-tail{overflow:hidden;position:relative;width:100%}.katex .halfarrow-left{left:0;overflow:hidden;position:absolute;width:50.2%}.katex .halfarrow-right{overflow:hidden;position:absolute;right:0;width:50.2%}.katex .brace-left{left:0;overflow:hidden;position:absolute;width:25.1%}.katex .brace-center{left:25%;overflow:hidden;position:absolute;width:50%}.katex .brace-right{overflow:hidden;position:absolute;right:0;width:25.1%}.katex .x-arrow-pad{padding:0 .5em}.katex .cd-arrow-pad{padding:0 .55556em 0 .27778em}.katex .mover,.katex .munder,.katex .x-arrow{text-align:center}.katex .boxpad{padding:0 .3em}.katex .fbox,.katex .fcolorbox{border:.04em solid;box-sizing:border-box}.katex .cancel-pad{padding:0 .2em}.katex .cancel-lap{margin-left:-.2em;margin-right:-.2em}.katex .sout{border-bottom-style:solid;border-bottom-width:.08em}.katex .angl{border-right:.049em solid;border-top:.049em solid;box-sizing:border-box;margin-right:.03889em}.katex .anglpad{padding:0 .03889em}.katex .eqn-num:before{content:"(" counter(katexEqnNo) ")";counter-increment:katexEqnNo}.katex .mml-eqn-num:before{content:"(" counter(mmlEqnNo) ")";counter-increment:mmlEqnNo}.katex .mtr-glue{width:50%}.katex .cd-vert-arrow{display:inline-block;position:relative}.katex .cd-label-left{display:inline-block;position:absolute;right:calc(50% + .3em);text-align:left}.katex .cd-label-right{display:inline-block;left:calc(50% + .3em);position:absolute;text-align:right}.katex-display{display:block;margin:1em 0;text-align:center}.katex-display>.katex{display:block;text-align:center;white-space:nowrap}.katex-display>.katex>.katex-html{display:block;position:relative}.katex-display>.katex>.katex-html>.tag{position:absolute;right:0}.katex-display.leqno>.katex>.katex-html>.tag{left:0;right:auto}.katex-display.fleqn>.katex{padding-left:2em;text-align:left}body{counter-reset:katexEqnNo mmlEqnNo}
+
+</style>
+<style>
+body {
+    padding-top: 25px;
+}
+</style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <h1 id="%E9%87%91%E8%9E%8D%E4%BA%A7%E5%93%81%E2%80%9C%E5%85%AC%E5%B9%B3%E8%AF%B4%E6%98%8E%E4%B9%A6%E2%80%9Dagent-%E9%A1%B9%E7%9B%AE%E5%88%B6%E4%BD%9C%E6%96%B9%E6%A1%88" tabindex="-1">金融产品“公平说明书”Agent 项目制作方案</h1>
+<blockquote>
+<p>文档用途：课程大作业总体设计、团队分工、开发实施、PPT 与 Demo 制作依据<br>
+当前版本：V1.0<br>
+项目性质：金融科技课程教学项目 / MVP 原型<br>
+暂定产品名：<strong>明白金 FinFair</strong><br>
+核心口号：<strong>不替你做决定，只把重要的事讲明白。</strong></p>
+</blockquote>
+<hr>
+<h2 id="0.-%E4%B8%80%E9%A1%B5%E7%BB%93%E8%AE%BA" tabindex="-1">0. 一页结论</h2>
+<h3 id="0.1-%E8%BF%99%E4%B8%AA%E9%A1%B9%E7%9B%AE%E5%88%B0%E5%BA%95%E8%A6%81%E5%81%9A%E4%BB%80%E4%B9%88" tabindex="-1">0.1 这个项目到底要做什么</h3>
+<p>“明白金 FinFair”是一款面向普通金融消费者和金融机构审查人员的金融产品信息解释与公平性检查 Agent。</p>
+<p>用户上传金融产品说明书、保险条款、宣传海报或销售话术后，系统自动：</p>
+<ol>
+<li>识别产品类型和文件结构；</li>
+<li>提取收益、费用、期限、风险、退出条件、免责条款等重要信息；</li>
+<li>将复杂术语转换为普通人能理解的语言；</li>
+<li>对照正式文件，检查宣传材料是否遗漏、弱化或模糊重要风险；</li>
+<li>生成最坏情形说明和“购买前必须确认的问题”；</li>
+<li>为每一项重要结论提供原文出处；</li>
+<li>输出一份结构清晰、可下载的“公平说明书”。</li>
+</ol>
+<p>项目不做收益预测，不推荐具体金融产品，不代替金融机构开展正式适当性评估，也不替用户作出购买决定。</p>
+<h3 id="0.2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%82%E5%90%88%E4%BD%9C%E4%B8%BA%E8%AF%BE%E7%A8%8B%E5%A4%A7%E4%BD%9C%E4%B8%9A" tabindex="-1">0.2 为什么适合作为课程大作业</h3>
+<ul>
+<li>需求真实：普通用户普遍难以理解长篇金融条款。</li>
+<li>有金融专业性：涉及风险、费用、期限、流动性、免责、信息披露和适当性。</li>
+<li>有 Agent 特征：需要完成文件识别、信息抽取、规则检查、交叉核验、解释生成和报告输出等多步骤任务。</li>
+<li>有产品闭环：上传材料到获得报告的完整流程可以实际演示。</li>
+<li>有创新性：重点不是“推荐什么产品”，而是“检查产品是否被讲明白”。</li>
+<li>有社会价值：帮助消费者降低因信息不对称产生的误解。</li>
+<li>有商业空间：既可面向消费者，也可面向银行、保险、财富管理和消保审查部门。</li>
+<li>Demo 效果好：可以直观展示宣传海报与正式条款之间的信息差异。</li>
+</ul>
+<h3 id="0.3-%E6%9C%80%E5%B0%8F%E5%8F%AF%E8%A1%8C%E4%BA%A7%E5%93%81-mvp" tabindex="-1">0.3 最小可行产品 MVP</h3>
+<p>在课程周期内，至少完成：</p>
+<ul>
+<li>支持上传 1 份 PDF 产品说明书；</li>
+<li>可选上传 1 张宣传海报或 1 段销售文案；</li>
+<li>自动识别并提取 8 类核心信息；</li>
+<li>输出通俗解释、风险清单和购买前问题；</li>
+<li>每条关键结论显示原文引用及页码；</li>
+<li>对宣传材料和正式文件进行一致性检查；</li>
+<li>生成网页报告，并支持下载 Markdown 或 PDF；</li>
+<li>使用一套模拟产品材料完成完整 Demo；</li>
+<li>形成 GitHub 仓库、商业路演 PPT 和 Demo 视频。</li>
+</ul>
+<hr>
+<h2 id="1.-%E8%80%81%E5%B8%88%E8%A6%81%E6%B1%82%E7%9A%84%E6%8B%86%E8%A7%A3" tabindex="-1">1. 老师要求的拆解</h2>
+<h3 id="1.1-%E8%80%81%E5%B8%88%E6%98%8E%E7%A1%AE%E6%8F%90%E5%87%BA%E7%9A%84%E8%A6%81%E6%B1%82" tabindex="-1">1.1 老师明确提出的要求</h3>
+<p>根据课程项目图片，老师明确提出：</p>
+<ol>
+<li>提交 GitHub 项目库；</li>
+<li>提交 PPT 商业计划书；</li>
+<li>提交 Demo 视频；</li>
+<li>以创业团队视角向投资人和用户证明项目；</li>
+<li>重视团队合作；</li>
+<li>判断需求是否真实、市场是否有前景；</li>
+<li>思考如何触达用户和完成用户转化；</li>
+<li>重视产品可用性与先进性。</li>
+</ol>
+<p>以上内容是当前已经掌握的明确要求。</p>
+<h3 id="1.2-%E4%BB%8E%E8%80%81%E5%B8%88%E6%8F%90%E4%BE%9B%E7%9A%84%E8%A7%86%E9%A2%91%E4%B8%AD%E5%BE%97%E5%88%B0%E7%9A%84%E9%A1%B9%E7%9B%AE%E6%A0%87%E5%87%86" tabindex="-1">1.2 从老师提供的视频中得到的项目标准</h3>
+<p>以下是根据三个参考视频作出的分析，不应当表述成老师逐字宣布的硬性规定：</p>
+<ul>
+<li>产品需要能够实际运行，不能只有概念或 PPT；</li>
+<li>可以使用 n8n、大模型 API、数据库和第三方 API 快速搭建；</li>
+<li>Agent 应当形成多步骤工作流，而不是只有一次对话；</li>
+<li>产品开发之后还要考虑第一批用户、推广渠道和商业化；</li>
+<li>好的项目需要完成“输入—处理—结果—用户价值”的闭环；</li>
+<li>早期项目应该控制成本，先验证核心需求；</li>
+<li>项目展示时要能够说明产品、技术、用户、营销与增长。</li>
+</ul>
+<h3 id="1.3-%E5%B0%9A%E6%9C%AA%E7%A1%AE%E8%AE%A4%E7%9A%84%E4%BD%9C%E4%B8%9A%E4%BF%A1%E6%81%AF" tabindex="-1">1.3 尚未确认的作业信息</h3>
+<p>目前材料没有明确以下事项，团队应向老师或助教确认：</p>
+<ul>
+<li>最终提交日期和具体时间；</li>
+<li>小组人数限制；</li>
+<li>PPT 页数及汇报时长；</li>
+<li>Demo 视频最长时长；</li>
+<li>是否需要单独提交 Word 版商业计划书；</li>
+<li>GitHub 是否必须公开；</li>
+<li>是否要求在线部署；</li>
+<li>是否允许使用付费 API；</li>
+<li>评分标准及各部分权重；</li>
+<li>是否需要现场演示；</li>
+<li>每位成员是否都必须参加答辩；</li>
+<li>文件命名和提交平台要求。</li>
+</ul>
+<p>在这些问题得到确认前，本方案采用以下工作假设：</p>
+<ul>
+<li>PPT 控制在 10—12 页；</li>
+<li>路演控制在 6—8 分钟；</li>
+<li>Demo 视频控制在 3—5 分钟；</li>
+<li>GitHub 使用公开仓库，但不上传密钥和敏感数据；</li>
+<li>产品至少能够在本地运行，争取提供在线体验地址；</li>
+<li>商业计划内容整合进路演 PPT，必要时再扩展成 Word 文档。</li>
+</ul>
+<hr>
+<h2 id="2.-%E9%A1%B9%E7%9B%AE%E5%AE%9A%E4%BD%8D" tabindex="-1">2. 项目定位</h2>
+<h3 id="2.1-%E9%A1%B9%E7%9B%AE%E5%90%8D%E7%A7%B0" tabindex="-1">2.1 项目名称</h3>
+<p>正式名称建议：</p>
+<p><strong>明白金 FinFair——金融产品公平说明书 Agent</strong></p>
+<p>备选名称：</p>
+<ul>
+<li>看懂再买</li>
+<li>金融条款显微镜</li>
+<li>FinClear</li>
+<li>风险说人话</li>
+</ul>
+<h3 id="2.2-%E4%B8%80%E5%8F%A5%E8%AF%9D%E4%BB%B7%E5%80%BC%E4%B8%BB%E5%BC%A0" tabindex="-1">2.2 一句话价值主张</h3>
+<p>将复杂、分散、容易被忽略的金融产品信息，转换成有出处、能理解、可核对的公平说明书。</p>
+<h3 id="2.3-%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98" tabindex="-1">2.3 核心问题</h3>
+<p>普通消费者购买理财、保险等产品时，经常面临：</p>
+<ul>
+<li>文件太长，不知道重点在哪里；</li>
+<li>术语专业，难以理解实际含义；</li>
+<li>宣传材料突出收益，风险说明不够醒目；</li>
+<li>不清楚提前退出、费用扣除和最坏结果；</li>
+<li>销售话术与正式合同可能存在差异；</li>
+<li>找不到免责、除外责任或特殊限制；</li>
+<li>无法判断还有哪些问题必须向销售人员确认。</li>
+</ul>
+<p>这些问题本质上属于金融产品提供方与消费者之间的信息不对称。</p>
+<h3 id="2.4-%E7%9B%AE%E6%A0%87%E7%94%A8%E6%88%B7" tabindex="-1">2.4 目标用户</h3>
+<h4 id="%E9%A6%96%E8%A6%81%E7%94%A8%E6%88%B7%EF%BC%9A%E6%99%AE%E9%80%9A%E9%87%91%E8%9E%8D%E6%B6%88%E8%B4%B9%E8%80%85" tabindex="-1">首要用户：普通金融消费者</h4>
+<ul>
+<li>第一次购买理财或保险的人；</li>
+<li>金融知识较少的消费者；</li>
+<li>需要替父母核对金融产品的年轻人；</li>
+<li>希望快速了解复杂产品文件的人。</li>
+</ul>
+<h4 id="%E6%AC%A1%E8%A6%81%E7%94%A8%E6%88%B7%EF%BC%9A%E9%87%91%E8%9E%8D%E6%9C%BA%E6%9E%84%E5%86%85%E9%83%A8%E4%BA%BA%E5%91%98" tabindex="-1">次要用户：金融机构内部人员</h4>
+<ul>
+<li>消费者权益保护人员；</li>
+<li>产品合规初审人员；</li>
+<li>营销材料审核人员；</li>
+<li>客户经理和保险销售培训人员；</li>
+<li>客服及投诉处理人员。</li>
+</ul>
+<h3 id="2.5-%E5%88%9D%E6%9C%9F%E8%81%9A%E7%84%A6%E8%8C%83%E5%9B%B4" tabindex="-1">2.5 初期聚焦范围</h3>
+<p>MVP 建议只选择一种金融产品类型，优先顺序为：</p>
+<ol>
+<li>银行理财产品说明书；</li>
+<li>储蓄型或健康保险条款；</li>
+<li>消费贷产品说明；</li>
+<li>基金产品资料概要。</li>
+</ol>
+<p><strong>推荐 MVP 首先支持银行理财产品。</strong></p>
+<p>原因：</p>
+<ul>
+<li>说明书结构相对规范；</li>
+<li>收益、风险、期限、费用和赎回条件比较清晰；</li>
+<li>容易制作模拟材料；</li>
+<li>适合展示宣传文案与正式说明书的差异；</li>
+<li>不需要处理复杂的医疗或事故证明。</li>
+</ul>
+<h3 id="2.6-%E6%98%8E%E7%A1%AE%E4%B8%8D%E5%81%9A%E4%BB%80%E4%B9%88" tabindex="-1">2.6 明确不做什么</h3>
+<p>第一版明确排除：</p>
+<ul>
+<li>不预测收益率和市场涨跌；</li>
+<li>不推荐买入、卖出或持有具体产品；</li>
+<li>不给出“适合买/不适合买”的确定结论；</li>
+<li>不替代金融机构正式风险测评；</li>
+<li>不承诺文件中没有其他风险；</li>
+<li>不自动办理购买、赎回或理赔；</li>
+<li>不连接真实银行账户；</li>
+<li>不采集身份证号、银行卡号等真实敏感信息；</li>
+<li>不把模型输出作为法律、合规或投资意见；</li>
+<li>不在未经授权的情况下处理真实客户材料。</li>
+</ul>
+<hr>
+<h2 id="3.-%E9%9C%80%E6%B1%82%E9%AA%8C%E8%AF%81%E6%96%B9%E6%A1%88" tabindex="-1">3. 需求验证方案</h2>
+<p>由于项目制作时间不足一天，本项目不再安排大规模访谈或问卷。需求依据改为“已有研究与监管材料”，当天只做最小可用性冒烟测试。这样能节省时间，同时避免把来不及完成的小样本调查包装成市场验证。</p>
+<h3 id="3.1-%E5%B7%B2%E6%9C%89%E7%A0%94%E7%A9%B6%E8%83%BD%E5%A4%9F%E6%94%AF%E6%8C%81%E7%9A%84%E5%88%A4%E6%96%AD" tabindex="-1">3.1 已有研究能够支持的判断</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>可获得的证据</th>
+<th>对本项目的含义</th>
+<th>证据状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>E1</td>
+<td>SEC 关于披露简化和 Plain English 的材料指出，披露只有在可理解、完整、及时的情况下才可能有效，并主张用通俗语言、关键信息摘要和术语表提升个人投资者理解</td>
+<td>“把专业文件转换为分层、通俗的说明书”具有明确的信息披露价值</td>
+<td>有权威材料支持</td>
+</tr>
+<tr>
+<td>E2</td>
+<td>SEC 的投资者金融素养研究显示，投资者偏好摘要式、分层式披露，即先展示核心信息，再允许查看更详细内容</td>
+<td>产品报告应采用“30 秒结论—通俗解释—原文证据”的三层结构</td>
+<td>有权威研究支持</td>
+</tr>
+<tr>
+<td>E3</td>
+<td>有关金融披露可读性的实验研究发现，简单语言有助于改善理解和金融决策任务体验；有关基金费用术语的研究也发现，通俗表达能够提高费用理解</td>
+<td>收益、风险、费用、期限和退出条件应使用普通语言解释，而不是直接复制条款</td>
+<td>有论文支持，但效果受具体材料和人群影响</td>
+</tr>
+<tr>
+<td>E4</td>
+<td>OECD 金融消费者风险研究指出，披露对于展示产品复杂性、风险、成本和适当性很重要，但仅靠披露不足以克服行为偏差、低金融素养和利益冲突</td>
+<td>产品不能声称“一份报告就能消除误导”，还需要最坏情形、购买前问题和人工核对</td>
+<td>有国际组织材料支持</td>
+</tr>
+<tr>
+<td>E5</td>
+<td>金融 AI 可解释性研究表明，解释的质量、完整性、准确性和有用性会影响用户对金融 AI 的评价与采用；实验研究也发现解释会在一定条件下影响信任和付费意愿</td>
+<td>Agent 不能只给结论，必须提供出处、原文和不确定性标记</td>
+<td>有研究支持，但“页码引用一定提升本产品信任”仍需后续验证</td>
+</tr>
+<tr>
+<td>E6</td>
+<td>《金融机构产品适当性管理办法》强调了解产品、了解客户、风险评级、风险承受能力评估、充分告知和风险提示</td>
+<td>项目应聚焦产品信息解释和风险披露，不应越界替用户做购买决定</td>
+<td>有现行监管依据支持</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3.2-%E7%A0%94%E7%A9%B6%E4%B8%8D%E8%83%BD%E6%9B%BF%E6%88%91%E4%BB%AC%E8%AF%81%E6%98%8E%E7%9A%84%E5%81%87%E8%AE%BE" tabindex="-1">3.2 研究不能替我们证明的假设</h3>
+<p>以下内容仍然只是项目假设，PPT 中不得写成已经验证的市场事实：</p>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>尚未验证的假设</th>
+<th>当前处理方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H1</td>
+<td>中国消费者愿意主动上传金融产品文件使用本工具</td>
+<td>标记为待验证，不给出虚构使用意愿比例</td>
+</tr>
+<tr>
+<td>H2</td>
+<td>用户愿意为个人版报告付费</td>
+<td>只作为商业模式设想，不预测转化率和收入</td>
+</tr>
+<tr>
+<td>H3</td>
+<td>金融机构愿意采购营销材料初审工具</td>
+<td>作为 B2B 延伸方向，不声称已经获得客户</td>
+</tr>
+<tr>
+<td>H4</td>
+<td>“宣传材料—正式文件对比”比普通文件摘要更有吸引力</td>
+<td>用 Demo 展示差异化，后续通过真实用户 A/B 测试</td>
+</tr>
+<tr>
+<td>H5</td>
+<td>页码引用能够显著提升本产品的用户信任</td>
+<td>现阶段把引用作为可核验和防幻觉措施，不虚构信任提升幅度</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3.3-%E5%BD%93%E5%A4%A9%E5%8F%AA%E5%81%9A%E6%9C%80%E5%B0%8F%E9%AA%8C%E8%AF%81" tabindex="-1">3.3 当天只做最小验证</h3>
+<p>如果能找到 1—2 名未参与开发的同学，用 10—15 分钟完成冒烟测试：</p>
+<ol>
+<li>给测试者一份模拟产品说明书和一张模拟海报；</li>
+<li>不讲解操作，让其独立上传并生成报告；</li>
+<li>请其找到“是否保本”“资金何时可退出”“有哪些费用”；</li>
+<li>请其点击一次原文引用，确认能否找到对应条款；</li>
+<li>询问一句：“这份报告是否比直接看原文件更容易找到关键信息？”</li>
+</ol>
+<p>只记录：</p>
+<ul>
+<li>能否完成任务；</li>
+<li>卡住的位置；</li>
+<li>引用是否能正确打开；</li>
+<li>一个最需要修复的问题。</li>
+</ul>
+<p>如果当天找不到测试者，就只做团队内部任务走查，并在 PPT 中如实写“尚未完成外部用户验证”，不要用团队成员反馈冒充用户研究。</p>
+<h3 id="3.4-ppt-%E5%8F%AF%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E7%9A%84%E8%AF%81%E6%8D%AE%E8%A1%A8%E8%BE%BE" tabindex="-1">3.4 PPT 可直接使用的证据表达</h3>
+<p>可以写：</p>
+<blockquote>
+<p>既有监管材料和研究表明，金融披露需要具备可理解性、完整性和及时性；个人投资者偏好摘要式、分层式披露。基于此，我们设计了“结论—通俗解释—原文证据”三层公平说明结构。</p>
+</blockquote>
+<p>不可以写：</p>
+<blockquote>
+<p>调研证明大多数用户愿意使用并付费。</p>
+</blockquote>
+<h3 id="3.5-%E5%8F%82%E8%80%83%E7%A0%94%E7%A9%B6%E4%B8%8E%E6%9D%90%E6%96%99" tabindex="-1">3.5 参考研究与材料</h3>
+<ol>
+<li>U.S. Securities and Exchange Commission, <em>Report of the Task Force on Disclosure Simplification</em>：<a href="https://www.sec.gov/news/studies/smpl.htm">https://www.sec.gov/news/studies/smpl.htm</a></li>
+<li>U.S. Securities and Exchange Commission, <em>Plain English Disclosure</em>：<a href="https://www.sec.gov/rules-regulations/1998/01/plain-english-disclosure">https://www.sec.gov/rules-regulations/1998/01/plain-english-disclosure</a></li>
+<li>U.S. Securities and Exchange Commission, <em>Study Regarding Financial Literacy Among Investors</em>：<a href="https://www.sec.gov/file/917-financial-literacy-study-part1pdf">https://www.sec.gov/file/917-financial-literacy-study-part1pdf</a></li>
+<li>OECD, <em>Consumer Finance Risk Monitor 2026 — Conduct-related risks</em>：<a href="https://www.oecd.org/en/publications/consumer-finance-risk-monitor-2026_61f7dbe0-en/full-report/conduct-related-risks_3038e5f7.html">https://www.oecd.org/en/publications/consumer-finance-risk-monitor-2026_61f7dbe0-en/full-report/conduct-related-risks_3038e5f7.html</a></li>
+<li>Ben David, Resheff &amp; Tron, <em>Explainable AI and Adoption of Financial Algorithmic Advisors: an Experimental Study</em>：<a href="https://arxiv.org/abs/2101.02555">https://arxiv.org/abs/2101.02555</a></li>
+<li><em>Does the ease of reading of financial disclosures influence investment decision?</em>：<a href="https://www.sciencedirect.com/science/article/pii/S0165176521001609">https://www.sciencedirect.com/science/article/pii/S0165176521001609</a></li>
+<li>国家金融监督管理总局，《金融机构产品适当性管理办法》：<a href="https://www.nfra.gov.cn/cn/view/pages/ItemDetail.html?docId=1217123&amp;itemId=917">https://www.nfra.gov.cn/cn/view/pages/ItemDetail.html?docId=1217123&amp;itemId=917</a></li>
+</ol>
+<p>引用这些研究只能证明“问题和设计原则有依据”，不能替代本产品自身的准确性测试、用户测试或商业验证。</p>
+<hr>
+<h2 id="4.-%E4%BA%A7%E5%93%81%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1" tabindex="-1">4. 产品功能设计</h2>
+<h3 id="4.1-%E6%A0%B8%E5%BF%83%E7%94%A8%E6%88%B7%E6%B5%81%E7%A8%8B" tabindex="-1">4.1 核心用户流程</h3>
+<div class="mermaid">flowchart LR
+    A["进入产品首页"] --> B["阅读隐私与用途说明"]
+    B --> C["上传产品说明书 PDF"]
+    C --> D["可选：上传宣传海报或销售文案"]
+    D --> E["选择关注点与填写非敏感需求"]
+    E --> F["Agent 解析并生成公平说明书"]
+    F --> G["查看摘要、风险、费用与退出条件"]
+    G --> H["点击结论查看原文页码和证据"]
+    H --> I["查看宣传材料一致性检查"]
+    I --> J["下载报告或重新分析"]</div><h3 id="4.2-mvp-%E5%BF%85%E5%81%9A%E5%8A%9F%E8%83%BD" tabindex="-1">4.2 MVP 必做功能</h3>
+<h4 id="f1.-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8E%E6%A0%A1%E9%AA%8C" tabindex="-1">F1. 文件上传与校验</h4>
+<ul>
+<li>上传 PDF；</li>
+<li>显示文件名、页数和大小；</li>
+<li>检查是否加密或无法读取；</li>
+<li>提醒用户不要上传身份证、银行卡等敏感信息；</li>
+<li>允许删除已上传文件；</li>
+<li>限制文件类型和大小。</li>
+</ul>
+<h4 id="f2.-%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90" tabindex="-1">F2. 文档解析</h4>
+<ul>
+<li>提取 PDF 文本；</li>
+<li>保留页码；</li>
+<li>对扫描件调用 OCR；</li>
+<li>识别标题和章节；</li>
+<li>对过长文件进行分块；</li>
+<li>记录每个文本块的来源页码。</li>
+</ul>
+<h4 id="f3.-%E4%BA%A7%E5%93%81%E7%B1%BB%E5%9E%8B%E8%AF%86%E5%88%AB" tabindex="-1">F3. 产品类型识别</h4>
+<p>识别：</p>
+<ul>
+<li>产品名称；</li>
+<li>产品发行方；</li>
+<li>产品类型；</li>
+<li>文件版本或日期；</li>
+<li>适用对象；</li>
+<li>币种；</li>
+<li>产品期限。</li>
+</ul>
+<p>识别不确定时必须显示“待确认”，不能自行补全。</p>
+<h4 id="f4.-%E5%85%AB%E7%B1%BB%E6%A0%B8%E5%BF%83%E4%BF%A1%E6%81%AF%E6%8F%90%E5%8F%96" tabindex="-1">F4. 八类核心信息提取</h4>
+<ol>
+<li>产品是什么；</li>
+<li>收益来源和收益不确定性；</li>
+<li>本金可能面临什么风险；</li>
+<li>产品期限与资金锁定；</li>
+<li>申购、赎回和提前退出条件；</li>
+<li>各类费用；</li>
+<li>主要风险和最不利情形；</li>
+<li>其他重要限制、免责或特殊条款。</li>
+</ol>
+<h4 id="f5.-%E9%80%9A%E4%BF%97%E8%A7%A3%E9%87%8A" tabindex="-1">F5. 通俗解释</h4>
+<p>每项信息采用三层表达：</p>
+<ul>
+<li>一句话结论；</li>
+<li>通俗解释；</li>
+<li>原文引用。</li>
+</ul>
+<p>示例：</p>
+<blockquote>
+<p>一句话结论：这不是保本产品，本金可能发生损失。<br>
+通俗解释：如果底层资产表现不佳，你最终拿回的钱可能少于投入金额。<br>
+原文出处：产品说明书第 4 页“本产品不保证本金及收益……”。</p>
+</blockquote>
+<h4 id="f6.-%E6%9C%80%E5%9D%8F%E6%83%85%E5%BD%A2%E8%AF%B4%E6%98%8E" tabindex="-1">F6. 最坏情形说明</h4>
+<p>使用明确但不过度恐吓的方式说明：</p>
+<ul>
+<li>是否可能损失本金；</li>
+<li>是否可能无法及时赎回；</li>
+<li>是否存在净值波动；</li>
+<li>提前退出可能付出的成本；</li>
+<li>哪些结果无法从当前材料中确定。</li>
+</ul>
+<p>不能虚构损失比例。文件没有给出具体数字时，只能说明风险类型。</p>
+<h4 id="f7.-%E5%AE%A3%E4%BC%A0%E6%9D%90%E6%96%99%E4%B8%80%E8%87%B4%E6%80%A7%E6%A3%80%E6%9F%A5" tabindex="-1">F7. 宣传材料一致性检查</h4>
+<p>对比宣传海报/销售文案与正式说明书：</p>
+<ul>
+<li>宣传说法是否有正式文件依据；</li>
+<li>是否只强调收益、弱化风险；</li>
+<li>是否遗漏期限或资金锁定；</li>
+<li>是否遗漏费用；</li>
+<li>是否使用“稳赚”“保本”“零风险”等绝对化表达；</li>
+<li>是否遗漏最不利结果；</li>
+<li>宣传数字与正式文件是否一致；</li>
+<li>有冲突时并列展示双方原文。</li>
+</ul>
+<h4 id="f8.-%E8%B4%AD%E4%B9%B0%E5%89%8D%E9%97%AE%E9%A2%98%E6%B8%85%E5%8D%95" tabindex="-1">F8. 购买前问题清单</h4>
+<p>自动生成 5—10 个需要用户向销售人员或机构确认的问题，例如：</p>
+<ul>
+<li>这款产品是否承诺本金安全？</li>
+<li>在什么情况下我无法按时赎回？</li>
+<li>除了页面展示的费用，还有哪些费用？</li>
+<li>展示的业绩比较基准是否等于实际收益？</li>
+<li>如果提前退出，可能损失什么？</li>
+</ul>
+<h4 id="f9.-%E8%AF%81%E6%8D%AE%E8%BF%BD%E6%BA%AF" tabindex="-1">F9. 证据追溯</h4>
+<p>每个关键结论必须能够：</p>
+<ul>
+<li>显示来源文件；</li>
+<li>显示页码；</li>
+<li>显示对应原文；</li>
+<li>区分“原文事实”和“模型解释”；</li>
+<li>对低置信度结果标记“请人工核对”。</li>
+</ul>
+<h4 id="f10.-%E6%8A%A5%E5%91%8A%E7%94%9F%E6%88%90" tabindex="-1">F10. 报告生成</h4>
+<p>报告至少包含：</p>
+<ul>
+<li>产品身份卡；</li>
+<li>30 秒看懂产品；</li>
+<li>收益与风险；</li>
+<li>期限与流动性；</li>
+<li>费用；</li>
+<li>最坏情形；</li>
+<li>宣传材料一致性；</li>
+<li>购买前问题；</li>
+<li>原文引用；</li>
+<li>免责声明和人工复核提示。</li>
+</ul>
+<h3 id="4.3-%E5%8A%A0%E5%88%86%E5%8A%9F%E8%83%BD" tabindex="-1">4.3 加分功能</h3>
+<p>时间充足时选择 1—3 项，不要全部堆叠：</p>
+<ul>
+<li>语音播报和适老化大字模式；</li>
+<li>多份产品横向对比；</li>
+<li>风险提示热力图；</li>
+<li>宣传海报视觉显著性检查；</li>
+<li>支持保险条款；</li>
+<li>报告中英文切换；</li>
+<li>消保人员审核工作台；</li>
+<li>人工修改后重新导出；</li>
+<li>历史报告管理；</li>
+<li>规则版本与模型版本记录；</li>
+<li>“结论—证据”关系图；</li>
+<li>用户反馈和错误报告按钮。</li>
+</ul>
+<h3 id="4.4-%E9%A1%B5%E9%9D%A2%E8%AE%BE%E8%AE%A1" tabindex="-1">4.4 页面设计</h3>
+<p>建议至少完成 5 个页面/状态：</p>
+<ol>
+<li><strong>首页</strong>：一句话价值、使用方法、示例报告；</li>
+<li><strong>上传页</strong>：文件上传、隐私提醒、示例材料；</li>
+<li><strong>分析进度页</strong>：显示 Agent 当前步骤；</li>
+<li><strong>报告页</strong>：公平说明书主体；</li>
+<li><strong>证据弹窗/抽屉</strong>：显示原文与页码。</li>
+</ol>
+<p>报告页建议按以下顺序：</p>
+<pre class='hljs'><code><div>产品身份卡
+→ 30秒结论
+→ 你可能获得什么
+→ 你可能失去什么
+→ 钱什么时候能取
+→ 要支付哪些费用
+→ 宣传与正式文件有何差异
+→ 购买前必须问什么
+→ 原文证据
+→ 局限与免责声明
+</div></code></pre>
+<hr>
+<h2 id="5.-agent-%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%AE%BE%E8%AE%A1" tabindex="-1">5. Agent 工作流设计</h2>
+<h3 id="5.1-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%AE%83%E6%98%AF-agent-%E8%80%8C%E4%B8%8D%E5%8F%AA%E6%98%AF%E8%81%8A%E5%A4%A9%E6%9C%BA%E5%99%A8%E4%BA%BA" tabindex="-1">5.1 为什么它是 Agent 而不只是聊天机器人</h3>
+<p>系统需要根据文件状态和中间结果选择下一步：</p>
+<ul>
+<li>判断 PDF 是文本版还是扫描版；</li>
+<li>根据产品类型选择抽取模板；</li>
+<li>调用 OCR、文档解析、检索和规则检查工具；</li>
+<li>对关键字段进行交叉核验；</li>
+<li>发现冲突时生成待确认项；</li>
+<li>生成报告后执行自检；</li>
+<li>证据不足时拒绝输出确定结论。</li>
+</ul>
+<h3 id="5.2-%E6%8E%A8%E8%8D%90%E5%B7%A5%E4%BD%9C%E6%B5%81" tabindex="-1">5.2 推荐工作流</h3>
+<div class="mermaid">flowchart TD
+    A["用户上传文件"] --> B{"文件可读取？"}
+    B -- "否" --> B1["返回错误与补救建议"]
+    B -- "是" --> C{"文本 PDF 或扫描件？"}
+    C -- "扫描件" --> D["OCR"]
+    C -- "文本 PDF" --> E["直接解析"]
+    D --> F["按页切分并保留来源"]
+    E --> F
+    F --> G["识别产品与文档版本"]
+    G --> H["抽取核心字段"]
+    H --> I["规则引擎检查"]
+    I --> J["检索相关原文证据"]
+    J --> K{"有宣传材料？"}
+    K -- "是" --> L["宣传材料与正式文件对比"]
+    K -- "否" --> M["跳过一致性检查"]
+    L --> N["生成通俗解释和问题清单"]
+    M --> N
+    N --> O["报告自检 Agent"]
+    O --> P{"关键结论有证据？"}
+    P -- "否" --> Q["降级为待确认/人工复核"]
+    P -- "是" --> R["生成公平说明书"]
+    Q --> R</div><h3 id="5.3-agent-%E6%A8%A1%E5%9D%97%E5%88%92%E5%88%86" tabindex="-1">5.3 Agent 模块划分</h3>
+<h4 id="agent-a%EF%BC%9A%E6%96%87%E6%A1%A3%E7%AE%A1%E7%90%86%E5%91%98" tabindex="-1">Agent A：文档管理员</h4>
+<p>职责：</p>
+<ul>
+<li>检查文件格式；</li>
+<li>判断是否需要 OCR；</li>
+<li>切分文件；</li>
+<li>保留页码和版本。</li>
+</ul>
+<h4 id="agent-b%EF%BC%9A%E4%BA%A7%E5%93%81%E5%88%86%E6%9E%90%E5%91%98" tabindex="-1">Agent B：产品分析员</h4>
+<p>职责：</p>
+<ul>
+<li>识别产品类型；</li>
+<li>提取结构化字段；</li>
+<li>汇总收益、风险、期限、费用和退出条件。</li>
+</ul>
+<h4 id="agent-c%EF%BC%9A%E5%85%AC%E5%B9%B3%E6%80%A7%E5%AE%A1%E6%9F%A5%E5%91%98" tabindex="-1">Agent C：公平性审查员</h4>
+<p>职责：</p>
+<ul>
+<li>对比宣传材料与正式文件；</li>
+<li>检查重大风险是否遗漏；</li>
+<li>标记疑似误导、绝对化或不完整表达。</li>
+</ul>
+<h4 id="agent-d%EF%BC%9A%E6%B6%88%E8%B4%B9%E8%80%85%E7%BF%BB%E8%AF%91%E5%91%98" tabindex="-1">Agent D：消费者翻译员</h4>
+<p>职责：</p>
+<ul>
+<li>将专业术语转换为通俗表达；</li>
+<li>生成购买前问题；</li>
+<li>避免形成投资推荐。</li>
+</ul>
+<h4 id="agent-e%EF%BC%9A%E8%AF%81%E6%8D%AE%E6%A0%B8%E9%AA%8C%E5%91%98" tabindex="-1">Agent E：证据核验员</h4>
+<p>职责：</p>
+<ul>
+<li>检查关键结论是否有原文支持；</li>
+<li>检查数字、单位、期限和条件是否一致；</li>
+<li>将无法确认的内容降级为待确认。</li>
+</ul>
+<p>MVP 可以在代码中实现为一个编排器调用多个步骤，不要求真的运行五个独立大模型实例。PPT 中应诚实说明实现方式。</p>
+<hr>
+<h2 id="6.-%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84" tabindex="-1">6. 信息抽取与数据结构</h2>
+<h3 id="6.1-%E6%A0%B8%E5%BF%83%E5%AD%97%E6%AE%B5" tabindex="-1">6.1 核心字段</h3>
+<pre class='hljs'><code><div><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;document&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;file_name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;document_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;version_date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;page_count&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;product&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;issuer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;product_type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;currency&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;term&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;target_customer_text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;return&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;return_description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;benchmark&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;guaranteed&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;uncertainties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;risk&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;principal_loss_possible&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">null</span></span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;risk_level&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;major_risks&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;worst_case_text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;liquidity&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;subscription_period&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;redemption_rules&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;lockup&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;early_exit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;fees&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;rate_or_amount&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;condition&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;conflicts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;open_questions&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;citations&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">}</span>
+</div></code></pre>
+<h3 id="6.2-%E5%BC%95%E7%94%A8%E5%AF%B9%E8%B1%A1" tabindex="-1">6.2 引用对象</h3>
+<pre class='hljs'><code><div><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;claim_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C-001&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;claim&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;该产品不保证本金安全&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;source_file&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;模拟理财产品说明书.pdf&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;page&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;source_text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;本产品为非保本浮动收益型产品……&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;confidence&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.96</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;status&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;supported&quot;</span>
+<span class="hljs-punctuation">}</span>
+</div></code></pre>
+<h3 id="6.3-%E7%BB%93%E8%AE%BA%E7%8A%B6%E6%80%81" tabindex="-1">6.3 结论状态</h3>
+<p>每条关键结论只能使用以下状态：</p>
+<ul>
+<li><code>supported</code>：原文明确支持；</li>
+<li><code>partially_supported</code>：原文只支持部分内容；</li>
+<li><code>conflicting</code>：不同材料存在冲突；</li>
+<li><code>not_found</code>：当前材料中未找到；</li>
+<li><code>needs_review</code>：解析或语义存在不确定性。</li>
+</ul>
+<p>禁止用模型常识把 <code>not_found</code> 自动补成确定答案。</p>
+<hr>
+<h2 id="7.-%E5%85%AC%E5%B9%B3%E6%80%A7%E6%A3%80%E6%9F%A5%E8%A7%84%E5%88%99" tabindex="-1">7. 公平性检查规则</h2>
+<h3 id="7.1-%E5%9F%BA%E7%A1%80%E8%A7%84%E5%88%99" tabindex="-1">7.1 基础规则</h3>
+<table>
+<thead>
+<tr>
+<th>规则编号</th>
+<th>检查内容</th>
+<th>典型问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R01</td>
+<td>保本与本金风险</td>
+<td>宣传暗示保本，说明书明确不保本</td>
+</tr>
+<tr>
+<td>R02</td>
+<td>收益表达</td>
+<td>将业绩比较基准表述为预期必得收益</td>
+</tr>
+<tr>
+<td>R03</td>
+<td>风险显著性</td>
+<td>收益醒目、风险隐藏在小字或后页</td>
+</tr>
+<tr>
+<td>R04</td>
+<td>产品期限</td>
+<td>宣传未说明资金锁定期</td>
+</tr>
+<tr>
+<td>R05</td>
+<td>退出条件</td>
+<td>宣传未说明无法提前赎回或赎回限制</td>
+</tr>
+<tr>
+<td>R06</td>
+<td>费用完整性</td>
+<td>宣传遗漏管理费、销售费等</td>
+</tr>
+<tr>
+<td>R07</td>
+<td>数字一致性</td>
+<td>宣传数字与正式文件不同</td>
+</tr>
+<tr>
+<td>R08</td>
+<td>绝对化用语</td>
+<td>出现“稳赚”“零风险”“百分百”等</td>
+</tr>
+<tr>
+<td>R09</td>
+<td>适用对象</td>
+<td>对目标用户和限制条件说明不足</td>
+</tr>
+<tr>
+<td>R10</td>
+<td>最不利结果</td>
+<td>未说明本金损失、流动性等最坏情形</td>
+</tr>
+<tr>
+<td>R11</td>
+<td>文件版本</td>
+<td>宣传引用了过期或无法确认的版本</td>
+</tr>
+<tr>
+<td>R12</td>
+<td>证据缺失</td>
+<td>重要说法无法在正式文件中找到</td>
+</tr>
+</tbody>
+</table>
+<h3 id="7.2-%E9%A3%8E%E9%99%A9%E5%88%86%E7%BA%A7" tabindex="-1">7.2 风险分级</h3>
+<ul>
+<li><strong>红色</strong>：材料明确冲突、疑似严重误导或关键风险被反向表述；</li>
+<li><strong>橙色</strong>：重大信息遗漏，可能显著影响理解；</li>
+<li><strong>黄色</strong>：表达不清、条件不完整，需要确认；</li>
+<li><strong>蓝色</strong>：一般性信息提醒；</li>
+<li><strong>灰色</strong>：系统无法确认，需要人工复核。</li>
+</ul>
+<p>风险等级仅表示“信息表达和材料一致性风险”，不能等同于产品官方风险等级。</p>
+<h3 id="7.3-%E8%A7%84%E5%88%99%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%BE%B9%E7%95%8C" tabindex="-1">7.3 规则与大模型的边界</h3>
+<p>规则引擎负责：</p>
+<ul>
+<li>数字一致性；</li>
+<li>关键词和绝对化用语；</li>
+<li>是否缺少字段；</li>
+<li>文件版本；</li>
+<li>固定条件检查。</li>
+</ul>
+<p>大模型负责：</p>
+<ul>
+<li>语义理解；</li>
+<li>通俗改写；</li>
+<li>条款之间的逻辑关系；</li>
+<li>宣传表达与正式文本的语义差异；</li>
+<li>生成购买前问题。</li>
+</ul>
+<p>最终重要结论必须经过证据核验步骤，不能直接采用生成模型第一次输出。</p>
+<hr>
+<h2 id="8.-%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF" tabindex="-1">8. 技术实现思路</h2>
+<h3 id="8.1-%E6%8E%A8%E8%8D%90%E6%8A%80%E6%9C%AF%E8%B7%AF%E7%BA%BF" tabindex="-1">8.1 推荐技术路线</h3>
+<h4 id="%E6%96%B9%E6%A1%88-a%EF%BC%9Apython-%E5%BF%AB%E9%80%9F%E5%BC%80%E5%8F%91" tabindex="-1">方案 A：Python 快速开发</h4>
+<ul>
+<li>前端与应用：Streamlit；</li>
+<li>后端：Python；</li>
+<li>PDF 文本：PyMuPDF；</li>
+<li>OCR：PaddleOCR 或云 OCR；</li>
+<li>数据验证：Pydantic；</li>
+<li>向量检索：FAISS/Chroma；</li>
+<li>大模型：DeepSeek、通义千问或其他可用 API；</li>
+<li>报告：HTML + WeasyPrint/浏览器打印；</li>
+<li>数据库：SQLite；</li>
+<li>部署：Streamlit Community Cloud、Render 或本地演示。</li>
+</ul>
+<p>优点：开发快、适合课程项目。<br>
+缺点：界面定制能力一般。</p>
+<h4 id="%E6%96%B9%E6%A1%88-b%EF%BC%9A%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB" tabindex="-1">方案 B：前后端分离</h4>
+<ul>
+<li>前端：React/Next.js；</li>
+<li>后端：FastAPI；</li>
+<li>数据库：PostgreSQL/Supabase；</li>
+<li>文件存储：本地或对象存储；</li>
+<li>Agent 编排：LangGraph 或自建状态机；</li>
+<li>部署：Vercel + Render/Railway。</li>
+</ul>
+<p>优点：产品感强。<br>
+缺点：开发量较大。</p>
+<h4 id="%E6%8E%A8%E8%8D%90%E9%80%89%E6%8B%A9" tabindex="-1">推荐选择</h4>
+<p>如果团队开发时间不超过一周，优先选择方案 A。<br>
+如果团队已有成熟前端和后端开发成员，可以选择方案 B。</p>
+<h3 id="8.2-n8n-%E6%98%AF%E5%90%A6%E9%9C%80%E8%A6%81" tabindex="-1">8.2 n8n 是否需要</h3>
+<p>n8n 不是必需的。可以用于：</p>
+<ul>
+<li>接收分析任务；</li>
+<li>调用 OCR 和大模型；</li>
+<li>生成报告后发送通知；</li>
+<li>保存用户反馈；</li>
+<li>定时执行测试。</li>
+</ul>
+<p>但是核心报告页面仍建议使用 Streamlit 或 Web 前端，否则产品体验容易停留在工作流演示层面。</p>
+<h3 id="8.3-%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84" tabindex="-1">8.3 系统架构</h3>
+<div class="mermaid">flowchart TB
+    U["用户浏览器"] --> UI["Streamlit / React 前端"]
+    UI --> API["应用服务 / FastAPI"]
+    API --> FS["临时文件存储"]
+    API --> PARSE["PDF 解析与 OCR"]
+    PARSE --> CHUNK["分页切分与结构化"]
+    CHUNK --> DB["SQLite / PostgreSQL"]
+    CHUNK --> RET["向量检索"]
+    API --> ORCH["Agent 编排器"]
+    ORCH --> LLM["大模型 API"]
+    ORCH --> RULE["公平性规则引擎"]
+    ORCH --> RET
+    ORCH --> VERIFY["证据核验"]
+    VERIFY --> REPORT["报告生成器"]
+    REPORT --> UI</div><h3 id="8.4-%E5%BB%BA%E8%AE%AE%E7%9A%84%E4%BB%A3%E7%A0%81%E6%A8%A1%E5%9D%97" tabindex="-1">8.4 建议的代码模块</h3>
+<pre class='hljs'><code><div>app/
+├── ui/
+│   ├── home.py
+│   ├── upload.py
+│   └── report.py
+├── parsers/
+│   ├── pdf_parser.py
+│   ├── ocr_parser.py
+│   └── image_parser.py
+├── agents/
+│   ├── orchestrator.py
+│   ├── product_extractor.py
+│   ├── fairness_reviewer.py
+│   ├── plain_language_writer.py
+│   └── evidence_verifier.py
+├── rules/
+│   ├── disclosure_rules.py
+│   ├── marketing_rules.py
+│   └── rule_catalog.yaml
+├── retrieval/
+│   ├── chunker.py
+│   └── retriever.py
+├── schemas/
+│   ├── product.py
+│   ├── citation.py
+│   └── report.py
+├── reports/
+│   ├── renderer.py
+│   └── templates/
+├── tests/
+└── main.py
+</div></code></pre>
+<h3 id="8.5-%E5%AF%86%E9%92%A5%E4%B8%8E%E9%85%8D%E7%BD%AE" tabindex="-1">8.5 密钥与配置</h3>
+<ul>
+<li>API Key 写入 <code>.env</code>；</li>
+<li>GitHub 只提交 <code>.env.example</code>；</li>
+<li><code>.gitignore</code> 排除 <code>.env</code>、上传文件、缓存、数据库和日志；</li>
+<li>Demo 视频中遮挡密钥；</li>
+<li>后端日志不能记录完整敏感文件；</li>
+<li>设置文件自动删除机制；</li>
+<li>使用模拟或脱敏材料演示。</li>
+</ul>
+<hr>
+<h2 id="9.-%E6%8F%90%E7%A4%BA%E8%AF%8D%E4%B8%8E%E9%98%B2%E5%B9%BB%E8%A7%89%E8%AE%BE%E8%AE%A1" tabindex="-1">9. 提示词与防幻觉设计</h2>
+<h3 id="9.1-%E6%8A%BD%E5%8F%96%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%8E%9F%E5%88%99" tabindex="-1">9.1 抽取提示词原则</h3>
+<p>提示词必须要求模型：</p>
+<ul>
+<li>只根据提供的文件回答；</li>
+<li>返回固定 JSON；</li>
+<li>每个字段附页码和原文；</li>
+<li>找不到时返回 <code>null</code>；</li>
+<li>不利用常识猜测产品信息；</li>
+<li>冲突时保留双方说法；</li>
+<li>区分产品官方风险等级与系统提示等级。</li>
+</ul>
+<h3 id="9.2-%E9%80%9A%E4%BF%97%E8%A7%A3%E9%87%8A%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%8E%9F%E5%88%99" tabindex="-1">9.2 通俗解释提示词原则</h3>
+<ul>
+<li>保留原意；</li>
+<li>不承诺收益；</li>
+<li>不弱化风险；</li>
+<li>不扩大原文没有说明的风险；</li>
+<li>避免使用投资建议语气；</li>
+<li>每段控制长度；</li>
+<li>为专业词提供一句解释；</li>
+<li>明确标注“模型解释”。</li>
+</ul>
+<h3 id="9.3-%E6%8A%A5%E5%91%8A%E8%87%AA%E6%A3%80%E9%97%AE%E9%A2%98" tabindex="-1">9.3 报告自检问题</h3>
+<p>报告生成后，核验 Agent 必须检查：</p>
+<ol>
+<li>每条关键结论是否有引用？</li>
+<li>引用页码是否存在？</li>
+<li>数字是否与原文一致？</li>
+<li>百分比的含义是否被改变？</li>
+<li>“业绩比较基准”是否被误写成实际收益？</li>
+<li>是否把“可能”改写成“一定”？</li>
+<li>是否产生购买建议？</li>
+<li>是否遗漏重大风险？</li>
+<li>宣传材料和正式文件冲突是否被保留？</li>
+<li>是否出现无法验证的监管或法律结论？</li>
+</ol>
+<hr>
+<h2 id="10.-%E6%B5%8B%E8%AF%95%E4%B8%8E%E8%AF%84%E4%BB%B7" tabindex="-1">10. 测试与评价</h2>
+<h3 id="10.1-%E6%B5%8B%E8%AF%95%E6%9D%90%E6%96%99" tabindex="-1">10.1 测试材料</h3>
+<p>至少制作三套不含真实个人信息的测试材料：</p>
+<h4 id="case-a%EF%BC%9A%E6%A0%87%E5%87%86%E6%9D%90%E6%96%99" tabindex="-1">Case A：标准材料</h4>
+<ul>
+<li>正式说明书结构完整；</li>
+<li>宣传材料与说明书一致；</li>
+<li>用于测试基础抽取和解释。</li>
+</ul>
+<h4 id="case-b%EF%BC%9A%E4%BF%A1%E6%81%AF%E9%81%97%E6%BC%8F" tabindex="-1">Case B：信息遗漏</h4>
+<ul>
+<li>宣传突出收益；</li>
+<li>未突出本金风险、费用或锁定期；</li>
+<li>用于测试公平性检查。</li>
+</ul>
+<h4 id="case-c%EF%BC%9A%E6%9D%90%E6%96%99%E5%86%B2%E7%AA%81" tabindex="-1">Case C：材料冲突</h4>
+<ul>
+<li>宣传数字与说明书不同；</li>
+<li>文件版本不同；</li>
+<li>用于测试冲突处理和人工复核。</li>
+</ul>
+<h3 id="10.2-%E5%8A%9F%E8%83%BD%E6%B5%8B%E8%AF%95" tabindex="-1">10.2 功能测试</h3>
+<table>
+<thead>
+<tr>
+<th>测试项</th>
+<th>通过标准</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF 上传</td>
+<td>合法文件可上传，错误格式有明确提示</td>
+</tr>
+<tr>
+<td>文本抽取</td>
+<td>主要段落与页码正确</td>
+</tr>
+<tr>
+<td>OCR</td>
+<td>扫描件核心字段可识别</td>
+</tr>
+<tr>
+<td>字段抽取</td>
+<td>8 类核心信息均有值或明确显示未找到</td>
+</tr>
+<tr>
+<td>引用</td>
+<td>关键结论可定位原文</td>
+</tr>
+<tr>
+<td>一致性检查</td>
+<td>预设冲突能够被发现</td>
+</tr>
+<tr>
+<td>报告</td>
+<td>页面无明显错位，可下载</td>
+</tr>
+<tr>
+<td>隐私提示</td>
+<td>上传前可见</td>
+</tr>
+<tr>
+<td>异常处理</td>
+<td>API 失败时不显示伪造结果</td>
+</tr>
+</tbody>
+</table>
+<h3 id="10.3-%E5%87%86%E7%A1%AE%E6%80%A7%E8%AF%84%E4%BC%B0" tabindex="-1">10.3 准确性评估</h3>
+<p>由团队人工制作“标准答案表”，逐项比较：</p>
+<ul>
+<li>字段抽取准确率；</li>
+<li>关键风险召回率；</li>
+<li>数字一致率；</li>
+<li>页码引用准确率；</li>
+<li>冲突识别准确率；</li>
+<li>无依据结论数量；</li>
+<li>通俗解释可理解度。</li>
+</ul>
+<p>不要只报告一个笼统“准确率”。建议至少展示：</p>
+<pre class='hljs'><code><div>核心字段准确率
+关键风险召回率
+引用页码准确率
+无依据结论率
+用户理解度评分
+</div></code></pre>
+<h3 id="10.4-%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E6%B5%8B%E8%AF%95" tabindex="-1">10.4 用户体验测试</h3>
+<p>时间允许时邀请 1—2 名未参与开发的同学完成：</p>
+<ol>
+<li>上传文件；</li>
+<li>找到产品是否保本；</li>
+<li>找到提前退出条件；</li>
+<li>查看一条结论的原文；</li>
+<li>找到宣传材料与正式文件的差异；</li>
+<li>下载报告。</li>
+</ol>
+<p>记录：</p>
+<ul>
+<li>是否能独立完成；</li>
+<li>完成时间；</li>
+<li>卡住的位置；</li>
+<li>最有用的模块；</li>
+<li>不信任的内容；</li>
+<li>改进建议。</li>
+</ul>
+<h3 id="10.5-%E6%88%90%E5%8A%9F%E6%8C%87%E6%A0%87" tabindex="-1">10.5 成功指标</h3>
+<p>课程 MVP 可以设置以下目标，但必须用真实测试验证后才能在 PPT 中表述为结果：</p>
+<ul>
+<li>关键字段抽取准确率达到 85% 以上；</li>
+<li>关键引用页码准确率达到 90% 以上；</li>
+<li>预设重大冲突召回率达到 90% 以上；</li>
+<li>1—2 名冒烟测试者能够独立找到“是否保本、退出条件、费用和原文引用”；若未完成外部测试，在 PPT 中标记为待验证；</li>
+<li>报告中无依据的确定性结论为 0；</li>
+<li>单份示例文件分析时间控制在 2 分钟内。</li>
+</ul>
+<p>以上是项目目标，不是当前已经实现的事实。</p>
+<hr>
+<h2 id="11.-%E9%87%91%E8%9E%8D%E3%80%81%E6%A8%A1%E5%9E%8B%E4%B8%8E%E6%95%B0%E6%8D%AE%E9%A3%8E%E9%99%A9" tabindex="-1">11. 金融、模型与数据风险</h2>
+<h3 id="11.1-%E9%A3%8E%E9%99%A9%E6%8E%A7%E5%88%B6%E8%A1%A8" tabindex="-1">11.1 风险控制表</h3>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>可能影响</th>
+<th>控制措施</th>
+<th>责任人</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型幻觉</td>
+<td>产生原文不存在的结论</td>
+<td>强制引用、JSON 校验、二次核验</td>
+<td>AI/后端</td>
+</tr>
+<tr>
+<td>引用错页</td>
+<td>用户无法核对</td>
+<td>分页解析、引用回放测试</td>
+<td>后端</td>
+</tr>
+<tr>
+<td>OCR 错误</td>
+<td>数字和条款识别错误</td>
+<td>低置信度标记、人工复核</td>
+<td>后端</td>
+</tr>
+<tr>
+<td>投资建议越界</td>
+<td>用户误以为系统推荐购买</td>
+<td>非目标约束、提示词限制、免责声明</td>
+<td>产品/合规</td>
+</tr>
+<tr>
+<td>隐私泄露</td>
+<td>上传材料包含个人信息</td>
+<td>上传提醒、脱敏、临时存储、自动删除</td>
+<td>后端</td>
+</tr>
+<tr>
+<td>材料版本冲突</td>
+<td>使用过期文件形成错误解释</td>
+<td>识别版本、并列展示、禁止静默选择</td>
+<td>Agent</td>
+</tr>
+<tr>
+<td>规则过时</td>
+<td>审查逻辑与要求不一致</td>
+<td>规则版本记录、人工更新</td>
+<td>产品/合规</td>
+</tr>
+<tr>
+<td>过度信任 AI</td>
+<td>用户直接依赖报告决策</td>
+<td>显示局限、原文入口、人工咨询提示</td>
+<td>产品</td>
+</tr>
+<tr>
+<td>API 不稳定</td>
+<td>Demo 失败</td>
+<td>缓存示例报告、错误提示、备用模型</td>
+<td>技术负责人</td>
+</tr>
+<tr>
+<td>成本失控</td>
+<td>长文档调用费用过高</td>
+<td>文本分块、缓存、限制页数</td>
+<td>技术负责人</td>
+</tr>
+</tbody>
+</table>
+<h3 id="11.2-%E4%BA%BA%E6%9C%BA%E8%BE%B9%E7%95%8C" tabindex="-1">11.2 人机边界</h3>
+<p>涉及用户权益和财务影响时：</p>
+<ul>
+<li>AI 只提供信息整理和辅助解释；</li>
+<li>用户应核对正式文件；</li>
+<li>重要争议由人工处理；</li>
+<li>系统不作最终购买或合规决定；</li>
+<li>低置信度、冲突和材料缺失必须进入人工复核。</li>
+</ul>
+<h3 id="11.3-%E5%85%8D%E8%B4%A3%E5%A3%B0%E6%98%8E%E5%BB%BA%E8%AE%AE" tabindex="-1">11.3 免责声明建议</h3>
+<blockquote>
+<p>本工具仅用于金融产品信息整理、通俗解释和材料一致性辅助检查，不构成投资建议、保险建议、法律意见或金融机构正式适当性评估。模型可能产生遗漏或错误，请以金融机构提供的正式文件为准，并在作出决定前向持牌机构或专业人员核实。</p>
+</blockquote>
+<h3 id="11.4-%E5%8F%82%E8%80%83%E5%88%B6%E5%BA%A6%E8%83%8C%E6%99%AF" tabindex="-1">11.4 参考制度背景</h3>
+<p>项目背景可参考：</p>
+<ul>
+<li>国家金融监督管理总局《金融机构产品适当性管理办法》，自 2026 年 2 月 1 日起施行；</li>
+<li>中国人民银行《金融消费者权益保护实施办法》；</li>
+<li>国家金融监督管理总局有关金融机构人工智能应用透明度、可解释性、公平性、人工复核和个人信息保护的要求。</li>
+</ul>
+<p>正式 PPT 引用时应再次核对发布机构、文件名称、版本、发布日期和生效日期，不把课程项目分析写成法律意见。</p>
+<p>参考链接：</p>
+<ul>
+<li><a href="https://www.nfra.gov.cn/cn/view/pages/ItemDetail.html?docId=1217123&amp;itemId=917">https://www.nfra.gov.cn/cn/view/pages/ItemDetail.html?docId=1217123&amp;itemId=917</a></li>
+<li><a href="https://www.pbc.gov.cn/zhengwugongkai/attachDir/2025/11/2025111914422147275.pdf">https://www.pbc.gov.cn/zhengwugongkai/attachDir/2025/11/2025111914422147275.pdf</a></li>
+<li><a href="https://www.nfra.gov.cn/cn/view/pages/governmentDetail.html?docId=1261784&amp;generaltype=1&amp;itemId=">https://www.nfra.gov.cn/cn/view/pages/governmentDetail.html?docId=1261784&amp;generaltype=1&amp;itemId=</a></li>
+</ul>
+<hr>
+<h2 id="12.-%E5%95%86%E4%B8%9A%E6%A8%A1%E5%BC%8F" tabindex="-1">12. 商业模式</h2>
+<h3 id="12.1-b2c-%E6%A8%A1%E5%BC%8F" tabindex="-1">12.1 B2C 模式</h3>
+<p>免费版：</p>
+<ul>
+<li>每月有限次数；</li>
+<li>支持单份文件；</li>
+<li>提供基础公平说明卡。</li>
+</ul>
+<p>个人付费版：</p>
+<ul>
+<li>支持更长文件；</li>
+<li>多产品对比；</li>
+<li>PDF 报告；</li>
+<li>历史记录；</li>
+<li>适老语音解释。</li>
+</ul>
+<h3 id="12.2-b2b-%E6%A8%A1%E5%BC%8F" tabindex="-1">12.2 B2B 模式</h3>
+<p>面向金融机构：</p>
+<ul>
+<li>营销材料初审；</li>
+<li>产品说明通俗化；</li>
+<li>消保培训；</li>
+<li>客诉材料辅助整理；</li>
+<li>私有化部署；</li>
+<li>API 接入；</li>
+<li>审计日志与规则管理。</li>
+</ul>
+<h3 id="12.3-%E9%A6%96%E6%89%B9%E7%94%A8%E6%88%B7%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5" tabindex="-1">12.3 首批用户从哪里来</h3>
+<p>低成本验证渠道：</p>
+<ul>
+<li>校园金融教育活动；</li>
+<li>投资者教育或消费者权益保护活动；</li>
+<li>后续可安排银行/保险从业者访谈（不列入当天 MVP）；</li>
+<li>小红书、B站等平台的金融科普内容；</li>
+<li>保险、理财相关社群；</li>
+<li>与高校金融社团合作；</li>
+<li>邀请用户上传公开产品材料进行体验。</li>
+</ul>
+<h3 id="12.4-%E7%94%A8%E6%88%B7%E8%BD%AC%E5%8C%96%E8%B7%AF%E5%BE%84" tabindex="-1">12.4 用户转化路径</h3>
+<pre class='hljs'><code><div>科普内容或案例
+→ 免费生成一张公平说明卡
+→ 发现原本忽略的重要条件
+→ 注册保存报告
+→ 使用多文件对比或高级报告
+→ 个人订阅 / 机构采购
+</div></code></pre>
+<h3 id="12.5-%E7%AB%9E%E4%BA%89%E5%88%86%E6%9E%90%E6%A1%86%E6%9E%B6" tabindex="-1">12.5 竞争分析框架</h3>
+<p>不要只写“市场上没有竞品”。应当比较：</p>
+<table>
+<thead>
+<tr>
+<th>替代方案</th>
+<th>优点</th>
+<th>缺点</th>
+<th>本项目差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自己阅读说明书</td>
+<td>权威、免费</td>
+<td>耗时、难理解</td>
+<td>自动提取与通俗解释</td>
+</tr>
+<tr>
+<td>询问销售人员</td>
+<td>方便</td>
+<td>立场可能不完全中立</td>
+<td>以正式文件为证据</td>
+</tr>
+<tr>
+<td>通用大模型</td>
+<td>灵活</td>
+<td>可能无引用、产生幻觉</td>
+<td>固定流程、规则与证据核验</td>
+</tr>
+<tr>
+<td>金融机构客服</td>
+<td>熟悉自家产品</td>
+<td>只能解释单一机构产品</td>
+<td>可形成统一说明格式</td>
+</tr>
+<tr>
+<td>金融科普平台</td>
+<td>内容丰富</td>
+<td>不能分析用户手中的具体文件</td>
+<td>面向具体材料生成报告</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12.6-%E5%B7%B2%E5%8F%91%E7%8E%B0%E7%9A%84%E7%B1%BB%E4%BC%BC%E4%BA%A7%E5%93%81%E4%B8%8E%E9%A1%B9%E7%9B%AE" tabindex="-1">12.6 已发现的类似产品与项目</h3>
+<p>公开市场上存在文件通俗解释、合同风险识别、金融文件 RAG 问答和基金费用分析等相似产品，但当前公开检索中未发现一个产品同时完整实现以下全部能力：</p>
+<pre class='hljs'><code><div>中国金融产品说明书上传
+→ 收益、风险、费用和退出条件抽取
+→ 宣传材料与正式文件对比
+→ 通俗说明
+→ 原文页码引用
+→ 明确限制投资建议
+</div></code></pre>
+<p>因此，本项目不能声称“市场上完全没有竞品”。更准确的定位是：将已经得到验证的文件解释、风险识别、金融分析和证据引用能力，组合到中国金融消费者购买前信息公平这一细分场景。</p>
+<h4 id="12.6.1-%E5%95%86%E4%B8%9A%E4%BA%A7%E5%93%81%E4%B8%8E%E5%AE%98%E6%96%B9%E5%B7%A5%E5%85%B7" tabindex="-1">12.6.1 商业产品与官方工具</h4>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>类型</th>
+<th>主要能力</th>
+<th>可以学习什么</th>
+<th>与明白金的差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Explain Documents</td>
+<td>通用商业产品</td>
+<td>上传 PDF/图片、通俗解释、说明重要内容与不明确事项、下载报告</td>
+<td>上传流程、分层解释、“没有写清楚就不猜”、免责声明</td>
+<td>不专门分析金融产品，不对照宣传材料</td>
+</tr>
+<tr>
+<td>BeforeYouPay</td>
+<td>通用商业产品</td>
+<td>提取费用、日期、风险、术语、问题清单和下一步行动</td>
+<td>报告栏目、风险卡片、按次收费思路</td>
+<td>面向合同、账单等通用文件，非金融适当性场景</td>
+</tr>
+<tr>
+<td>Contract Clarity Agent</td>
+<td>Agent 案例</td>
+<td>PDF/DOCX/图片分析、风险分级、通俗解释、隐私优先、多轮追问</td>
+<td>Streamlit 页面、风险标签、文件删除机制</td>
+<td>偏法律合同分析，没有金融披露规则</td>
+</tr>
+<tr>
+<td>FINRA Fund Analyzer</td>
+<td>官方金融工具</td>
+<td>基金、ETF、ETN 信息查询，估算费用对投资价值的影响</td>
+<td>费用模块、产品对比、数字来源和计算说明</td>
+<td>不上传 PDF，不分析具体条款和营销话术</td>
+</tr>
+<tr>
+<td>Financial Content Assistant</td>
+<td>金融 RAG 项目</td>
+<td>上传金融文件、自然语言问答、跨文件分析、来源引用</td>
+<td>金融文件检索、答案来源、学生项目展示方式</td>
+<td>偏专业金融报告问答，不生成消费者公平说明书</td>
+</tr>
+</tbody>
+</table>
+<h5 id="explain-documents" tabindex="-1">Explain Documents</h5>
+<p>网址：<a href="https://www.explaindocuments.com/">https://www.explaindocuments.com/</a></p>
+<p>它支持上传复杂文件并生成通俗解释。如果文件没有明确说明某件事，产品会告诉用户“不清楚”，而不是自行猜测。它还明确声明不提供法律、医疗或金融建议。</p>
+<p>本项目应借鉴：</p>
+<ul>
+<li>上传前说明用途和边界；</li>
+<li>采用“一句话解释—重要事项—不明确事项”的层次；</li>
+<li>将找不到的字段标记为“当前材料未说明”；</li>
+<li>不使用模型常识强行补全产品信息。</li>
+</ul>
+<h5 id="beforeyoupay" tabindex="-1">BeforeYouPay</h5>
+<p>网址：<a href="https://beforeyoupay.app/">https://beforeyoupay.app/</a></p>
+<p>它允许用户上传合同、账单、报价等文件，并生成费用、日期、术语、风险红旗和需要提出的问题。</p>
+<p>本项目可借鉴其报告结构：</p>
+<pre class='hljs'><code><div>30 秒看懂产品
+→ 收益和本金风险
+→ 费用
+→ 期限与退出
+→ 风险红旗
+→ 购买前必须确认的问题
+</div></code></pre>
+<h5 id="contract-clarity-agent" tabindex="-1">Contract Clarity Agent</h5>
+<p>网址：<a href="https://www.tezansahu.com/ai-garage/contract-clarity-agent/">https://www.tezansahu.com/ai-garage/contract-clarity-agent/</a></p>
+<p>该案例采用 Streamlit 和 Agent 框架处理 PDF、DOCX 与图片，提供高/中/低风险标记、通俗解释和隐私处理。</p>
+<p>本项目可借鉴：</p>
+<ul>
+<li>Streamlit 上传页与报告页布局；</li>
+<li>用颜色和标签表达问题严重程度；</li>
+<li>将隐私提示放在上传入口；</li>
+<li>文件分析结束后删除临时文件。</li>
+</ul>
+<h5 id="finra-fund-analyzer" tabindex="-1">FINRA Fund Analyzer</h5>
+<p>网址：<a href="https://www.investor.gov/financial-tools-calculators/financial-tools/mutual-fund-analyzer">https://www.investor.gov/financial-tools-calculators/financial-tools/mutual-fund-analyzer</a></p>
+<p>该官方工具重点展示基金费用及费用对投资价值的影响。明白金第一版不必实现复杂费用模拟，但至少应输出：</p>
+<pre class='hljs'><code><div>费用名称｜费率或金额｜触发条件｜原文页码
+</div></code></pre>
+<p>长期费用影响和多产品对比可以作为后续规划。</p>
+<h5 id="financial-content-assistant" tabindex="-1">Financial Content Assistant</h5>
+<p>网址：<a href="https://nilayraut.github.io/financial_content_assistant/">https://nilayraut.github.io/financial_content_assistant/</a></p>
+<p>该课程项目支持上传金融文件、自然语言问答和来源引用，适合学习学生项目如何介绍 RAG 架构、金融领域能力和产品界面。</p>
+<p>明白金需要在普通金融问答基础上增加：</p>
+<ul>
+<li>固定的金融产品字段；</li>
+<li>公平性规则；</li>
+<li>宣传材料与正式文件对比；</li>
+<li>购买前问题清单；</li>
+<li>不确定性与人工复核机制。</li>
+</ul>
+<h4 id="12.6.2-%E5%8F%AF%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE" tabindex="-1">12.6.2 可学习的开源项目</h4>
+<h5 id="llm-powered-pdf-chatbot" tabindex="-1">LLM-powered PDF Chatbot</h5>
+<p>GitHub：<a href="https://github.com/shaadclt/LLM-powered-PDF-Chatbot">https://github.com/shaadclt/LLM-powered-PDF-Chatbot</a></p>
+<p>已有能力：</p>
+<ul>
+<li>Streamlit 页面；</li>
+<li>PDF 上传与 PyPDF2 文本提取；</li>
+<li>文本切分；</li>
+<li>FAISS 向量检索；</li>
+<li>LangChain；</li>
+<li>基于 PDF 的问答。</li>
+</ul>
+<p>该项目使用 MIT License，可作为当天 MVP 的代码结构参考。建议保留“上传—解析—检索”链路，将自由聊天改成固定分析任务：</p>
+<pre class='hljs'><code><div>提取产品名称
+提取是否保本
+提取风险等级
+提取期限
+提取赎回条件
+提取费用
+提取最不利情形
+返回原文证据
+</div></code></pre>
+<p>使用时必须再次核对仓库当前许可证，保留原许可证和版权声明，并在 README 中注明参考来源。</p>
+<h5 id="kaist-gar" tabindex="-1">KAIST GAR</h5>
+<p>GitHub：<a href="https://github.com/seohyunwoo-0407/GAR">https://github.com/seohyunwoo-0407/GAR</a></p>
+<p>这是面向金融问答的 RAG 项目，包含混合检索和检索优化。它更适合学习金融文件检索方法，不适合作为当天完整前端直接使用。</p>
+<p>可借鉴的原则：</p>
+<ul>
+<li>金融文件不能只做关键词匹配；</li>
+<li>可以组合关键词检索和语义检索；</li>
+<li>检索结果仍然需要二次核验；</li>
+<li>数字、条件和页码应保留原始证据。</li>
+</ul>
+<h5 id="chat-with-pdf-locally" tabindex="-1">Chat with PDF Locally</h5>
+<p>GitHub：<a href="https://github.com/drisskhattabi6/Chat-with-PDF-Locally">https://github.com/drisskhattabi6/Chat-with-PDF-Locally</a></p>
+<p>该项目使用 Streamlit、Ollama、LangChain 和 ChromaDB 在本地处理 PDF，可以学习本地文件处理与隐私保护思路。如果团队电脑尚未配置 Ollama，不建议在不足一天的时间里临时下载和配置本地大模型。</p>
+<h5 id="financebench" tabindex="-1">FinanceBench</h5>
+<p>GitHub：<a href="https://github.com/patronus-ai/financebench">https://github.com/patronus-ai/financebench</a></p>
+<p>FinanceBench 是金融文档问答测试集，不是可以直接交付的完整产品。它提供问题、标准答案、证据和金融 PDF，适合借鉴测试方法：</p>
+<pre class='hljs'><code><div><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;question&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;产品是否保证本金？&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;expected_answer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;否&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;evidence&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;本产品为非保本浮动收益型产品……&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;page&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">4</span>
+<span class="hljs-punctuation">}</span>
+</div></code></pre>
+<p>本项目可以制作 10—20 条类似的标准答案，分别测试：</p>
+<ul>
+<li>字段抽取；</li>
+<li>数字与单位；</li>
+<li>风险召回；</li>
+<li>原文页码；</li>
+<li>材料冲突；</li>
+<li>找不到内容时是否拒绝猜测。</li>
+</ul>
+<h4 id="12.6.3-%E7%AB%9E%E5%93%81%E5%8A%9F%E8%83%BD%E5%AF%B9%E6%AF%94%E7%9F%A9%E9%98%B5" tabindex="-1">12.6.3 竞品功能对比矩阵</h4>
+<table>
+<thead>
+<tr>
+<th>能力</th>
+<th style="text-align:right">Explain Documents</th>
+<th style="text-align:right">BeforeYouPay</th>
+<th style="text-align:right">FINRA Fund Analyzer</th>
+<th style="text-align:right">普通 PDF 聊天</th>
+<th style="text-align:right">明白金</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>上传 PDF</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>通俗解释</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">部分</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>金融产品专用字段</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>风险与费用提取</td>
+<td style="text-align:right">部分</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">费用为主</td>
+<td style="text-align:right">不固定</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>宣传与正式文件对比</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>原文页码引用</td>
+<td style="text-align:right">不明确</td>
+<td style="text-align:right">不明确</td>
+<td style="text-align:right">数据来源</td>
+<td style="text-align:right">部分支持</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>购买前问题清单</td>
+<td style="text-align:right">部分</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>不确定性标记</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">部分</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">通常不足</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>中国适当性语境</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">—</td>
+<td style="text-align:right">✓</td>
+</tr>
+<tr>
+<td>明确限制投资推荐</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">✓</td>
+<td style="text-align:right">工具型</td>
+<td style="text-align:right">取决于提示词</td>
+<td style="text-align:right">✓</td>
+</tr>
+</tbody>
+</table>
+<p>“不明确”表示公开页面没有提供足够证据证明该能力，而不是断言产品一定没有该能力。</p>
+<h4 id="12.6.4-ppt-%E6%8E%A8%E8%8D%90%E8%A1%A8%E8%BF%B0" tabindex="-1">12.6.4 PPT 推荐表述</h4>
+<p>不应写：</p>
+<blockquote>
+<p>市场上完全没有类似产品。</p>
+</blockquote>
+<p>建议写：</p>
+<blockquote>
+<p>市场已经验证了复杂文件通俗解释、合同风险识别和基金费用分析的需求，但现有公开方案大多是通用文档解释器、合同审查工具、金融报告问答或基金数据计算器。它们通常缺少面向中国金融产品的结构化披露检查，也很少同时完成宣传材料与正式文件对照、原文证据追溯和适当性边界控制。明白金将这些能力组合到“购买前信息公平”这一细分场景。</p>
+</blockquote>
+<h4 id="12.6.5-%E4%B8%8D%E8%B6%B3%E4%B8%80%E5%A4%A9%E7%9A%84%E5%8F%82%E8%80%83%E7%BB%84%E5%90%88" tabindex="-1">12.6.5 不足一天的参考组合</h4>
+<p>建议组合学习，不完整照搬任何单一产品：</p>
+<table>
+<thead>
+<tr>
+<th>用途</th>
+<th>优先参考</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF 上传与 RAG 代码骨架</td>
+<td>LLM-powered PDF Chatbot</td>
+</tr>
+<tr>
+<td>报告信息结构</td>
+<td>BeforeYouPay</td>
+</tr>
+<tr>
+<td>“不知道就不猜”</td>
+<td>Explain Documents</td>
+</tr>
+<tr>
+<td>费用展示</td>
+<td>FINRA Fund Analyzer</td>
+</tr>
+<tr>
+<td>评估方式</td>
+<td>FinanceBench</td>
+</tr>
+<tr>
+<td>项目自身创新</td>
+<td>金融专用字段、宣传材料对照、页码证据、适当性边界</td>
+</tr>
+</tbody>
+</table>
+<p>商业网站只能用于学习公开功能和信息架构，不能复制其代码、文案、商标或视觉素材。开源项目也必须先核对许可证，遵守署名、版权和再发布条件。团队应在 README 中增加“参考与致谢”章节，说明借鉴来源和自主开发内容。</p>
+<hr>
+<h2 id="13.-%E8%B7%AF%E6%BC%94-ppt-%E7%BB%93%E6%9E%84" tabindex="-1">13. 路演 PPT 结构</h2>
+<p>建议 11 页：</p>
+<h3 id="%E7%AC%AC-1-%E9%A1%B5%EF%BC%9A%E5%B0%81%E9%9D%A2" tabindex="-1">第 1 页：封面</h3>
+<ul>
+<li>明白金 FinFair；</li>
+<li>金融产品公平说明书 Agent；</li>
+<li>一句话口号；</li>
+<li>团队名称和成员。</li>
+</ul>
+<h3 id="%E7%AC%AC-2-%E9%A1%B5%EF%BC%9A%E7%94%A8%E6%88%B7%E7%97%9B%E7%82%B9" tabindex="-1">第 2 页：用户痛点</h3>
+<ul>
+<li>金融文件长、专业、重要条件分散；</li>
+<li>用一个真实但脱敏的页面对比说明问题；</li>
+<li>放权威研究结论和一张复杂条款示例，不虚构访谈原话。</li>
+</ul>
+<h3 id="%E7%AC%AC-3-%E9%A1%B5%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E5%9C%A8%E5%81%9A" tabindex="-1">第 3 页：为什么现在做</h3>
+<ul>
+<li>适当性管理、金融消保和 AI 透明度背景；</li>
+<li>大模型的长文本、多模态和 Agent 能力已具备；</li>
+<li>明确引用来源，不编造市场数字。</li>
+</ul>
+<h3 id="%E7%AC%AC-4-%E9%A1%B5%EF%BC%9A%E4%BA%A7%E5%93%81%E6%96%B9%E6%A1%88" tabindex="-1">第 4 页：产品方案</h3>
+<ul>
+<li>上传说明书和宣传材料；</li>
+<li>自动生成公平说明书；</li>
+<li>展示产品报告截图。</li>
+</ul>
+<h3 id="%E7%AC%AC-5-%E9%A1%B5%EF%BC%9A%E6%A0%B8%E5%BF%83%E7%94%A8%E6%88%B7%E6%B5%81%E7%A8%8B" tabindex="-1">第 5 页：核心用户流程</h3>
+<ul>
+<li>用流程图展示上传、分析、核验、报告。</li>
+</ul>
+<h3 id="%E7%AC%AC-6-%E9%A1%B5%EF%BC%9Aagent-%E4%B8%8E%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84" tabindex="-1">第 6 页：Agent 与技术架构</h3>
+<ul>
+<li>PDF/OCR；</li>
+<li>结构化抽取；</li>
+<li>RAG；</li>
+<li>公平性规则；</li>
+<li>证据核验；</li>
+<li>报告生成。</li>
+</ul>
+<h3 id="%E7%AC%AC-7-%E9%A1%B5%EF%BC%9A%E6%A0%B8%E5%BF%83%E5%88%9B%E6%96%B0" tabindex="-1">第 7 页：核心创新</h3>
+<ul>
+<li>不做产品推荐，做信息公平；</li>
+<li>宣传材料与正式文件交叉核验；</li>
+<li>每条结论可追溯；</li>
+<li>模型与规则协同；</li>
+<li>人工复核边界。</li>
+</ul>
+<h3 id="%E7%AC%AC-8-%E9%A1%B5%EF%BC%9A%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%95%88%E6%9E%9C" tabindex="-1">第 8 页：测试与效果</h3>
+<ul>
+<li>测试材料；</li>
+<li>准确率、召回率和引用准确率；</li>
+<li>用户测试结果；</li>
+<li>错误案例和改进。</li>
+</ul>
+<h3 id="%E7%AC%AC-9-%E9%A1%B5%EF%BC%9A%E5%B8%82%E5%9C%BA%E4%B8%8E%E7%AB%9E%E4%BA%89" tabindex="-1">第 9 页：市场与竞争</h3>
+<ul>
+<li>目标用户；</li>
+<li>替代方案；</li>
+<li>竞争矩阵；</li>
+<li>第一批用户来源。</li>
+</ul>
+<h3 id="%E7%AC%AC-10-%E9%A1%B5%EF%BC%9A%E5%95%86%E4%B8%9A%E6%A8%A1%E5%BC%8F%E4%B8%8E%E5%8F%91%E5%B1%95%E8%AE%A1%E5%88%92" tabindex="-1">第 10 页：商业模式与发展计划</h3>
+<ul>
+<li>B2C 免费增值；</li>
+<li>B2B 审核与私有化；</li>
+<li>从理财扩展到保险、基金和消费贷。</li>
+</ul>
+<h3 id="%E7%AC%AC-11-%E9%A1%B5%EF%BC%9A%E5%9B%A2%E9%98%9F%E4%B8%8E%E8%AF%B7%E6%B1%82" tabindex="-1">第 11 页：团队与请求</h3>
+<ul>
+<li>分工；</li>
+<li>已完成内容；</li>
+<li>下一步；</li>
+<li>希望获得的资源或合作。</li>
+</ul>
+<hr>
+<h2 id="14.-demo-%E8%A7%86%E9%A2%91%E8%84%9A%E6%9C%AC" tabindex="-1">14. Demo 视频脚本</h2>
+<h3 id="14.1-%E6%8E%A8%E8%8D%90%E6%97%B6%E9%95%BF" tabindex="-1">14.1 推荐时长</h3>
+<p>3—5 分钟。老师若有明确限制，以老师要求为准。</p>
+<h3 id="14.2-%E6%BC%94%E7%A4%BA%E6%A1%88%E4%BE%8B" tabindex="-1">14.2 演示案例</h3>
+<p>准备：</p>
+<ul>
+<li>一份模拟银行理财产品说明书；</li>
+<li>一张突出“业绩比较基准”的模拟宣传海报；</li>
+<li>海报故意遗漏“不保本”和“封闭期”信息；</li>
+<li>所有机构名称和数据均标注为教学模拟。</li>
+</ul>
+<h3 id="14.3-%E8%A7%86%E9%A2%91%E7%BB%93%E6%9E%84" tabindex="-1">14.3 视频结构</h3>
+<h4 id="0%3A00%E2%80%940%3A20-%E9%97%AE%E9%A2%98" tabindex="-1">0:00—0:20 问题</h4>
+<blockquote>
+<p>一张宣传海报只需要几秒就能看懂收益，但几十页的正式产品说明书里，风险、费用和退出条件往往很难快速找到。</p>
+</blockquote>
+<h4 id="0%3A20%E2%80%940%3A40-%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D" tabindex="-1">0:20—0:40 产品介绍</h4>
+<blockquote>
+<p>明白金不替用户推荐产品，而是把产品的重要信息讲明白，并让每条结论都能回到正式文件。</p>
+</blockquote>
+<h4 id="0%3A40%E2%80%941%3A10-%E4%B8%8A%E4%BC%A0%E6%9D%90%E6%96%99" tabindex="-1">0:40—1:10 上传材料</h4>
+<ul>
+<li>上传模拟说明书；</li>
+<li>上传宣传海报；</li>
+<li>展示隐私提醒；</li>
+<li>点击开始分析。</li>
+</ul>
+<h4 id="1%3A10%E2%80%942%3A30-agent-%E5%B7%A5%E4%BD%9C" tabindex="-1">1:10—2:30 Agent 工作</h4>
+<p>展示状态：</p>
+<ul>
+<li>正在解析文件；</li>
+<li>正在识别产品；</li>
+<li>正在提取风险和费用；</li>
+<li>正在对比宣传材料；</li>
+<li>正在核验原文证据；</li>
+<li>正在生成报告。</li>
+</ul>
+<h4 id="2%3A30%E2%80%943%3A40-%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%9C" tabindex="-1">2:30—3:40 查看结果</h4>
+<p>重点展示：</p>
+<ul>
+<li>产品不保本；</li>
+<li>业绩比较基准不等于实际收益；</li>
+<li>存在资金锁定期；</li>
+<li>宣传材料遗漏重大信息；</li>
+<li>点击结论查看原文页码；</li>
+<li>查看购买前问题清单。</li>
+</ul>
+<h4 id="3%3A40%E2%80%944%3A10-%E4%BB%B7%E5%80%BC%E4%B8%8E%E8%BE%B9%E7%95%8C" tabindex="-1">3:40—4:10 价值与边界</h4>
+<blockquote>
+<p>明白金只做信息整理和风险解释，不构成投资建议。它让消费者更容易理解，也能帮助机构在营销材料发布前发现表达风险。</p>
+</blockquote>
+<h4 id="4%3A10%E2%80%944%3A30-%E5%95%86%E4%B8%9A%E5%89%8D%E6%99%AF" tabindex="-1">4:10—4:30 商业前景</h4>
+<ul>
+<li>消费者免费说明卡；</li>
+<li>机构营销材料初审；</li>
+<li>后续扩展保险、基金等产品。</li>
+</ul>
+<hr>
+<h2 id="15.-github-%E4%BB%93%E5%BA%93%E8%A6%81%E6%B1%82" tabindex="-1">15. GitHub 仓库要求</h2>
+<h3 id="15.1-readme-%E5%BF%85%E9%A1%BB%E5%8C%85%E5%90%AB" tabindex="-1">15.1 README 必须包含</h3>
+<ul>
+<li>项目名称和一句话介绍；</li>
+<li>产品截图或 GIF；</li>
+<li>用户痛点；</li>
+<li>核心功能；</li>
+<li>Agent 工作流；</li>
+<li>技术架构；</li>
+<li>安装步骤；</li>
+<li>配置方法；</li>
+<li>本地运行命令；</li>
+<li>示例材料；</li>
+<li>测试方法；</li>
+<li>已知限制；</li>
+<li>隐私与免责声明；</li>
+<li>团队成员及分工；</li>
+<li>Demo 视频和 PPT 链接；</li>
+<li>开源协议。</li>
+</ul>
+<h3 id="15.2-%E5%BB%BA%E8%AE%AE%E4%BB%93%E5%BA%93%E7%BB%93%E6%9E%84" tabindex="-1">15.2 建议仓库结构</h3>
+<pre class='hljs'><code><div>FinFair/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── .env.example
+├── requirements.txt
+├── app/
+├── tests/
+├── sample_data/
+│   ├── README.md
+│   ├── 模拟理财产品说明书.pdf
+│   └── 模拟宣传海报.png
+├── docs/
+│   ├── 产品需求文档.md
+│   ├── 技术设计.md
+│   ├── 测试报告.md
+│   └── 风险与合规说明.md
+├── presentation/
+│   └── FinFair商业计划书.pptx
+└── demo/
+    └── Demo视频链接.md
+</div></code></pre>
+<h3 id="15.3-github-%E8%B4%A8%E9%87%8F%E8%A6%81%E6%B1%82" tabindex="-1">15.3 GitHub 质量要求</h3>
+<ul>
+<li>能按 README 成功运行；</li>
+<li>不包含 API Key；</li>
+<li>不上传真实敏感金融数据；</li>
+<li>有清晰提交记录；</li>
+<li>团队成员分别提交代码或文档；</li>
+<li>至少有基础测试；</li>
+<li>Issue 或 Projects 中体现任务分工；</li>
+<li>Release 中打包最终提交版本；</li>
+<li>最终提交前检查所有链接。</li>
+</ul>
+<hr>
+<h2 id="16.-%E5%9B%A2%E9%98%9F%E5%88%86%E5%B7%A5" tabindex="-1">16. 团队分工</h2>
+<h3 id="16.1-%E5%9B%9B%E4%BA%BA%E5%9B%A2%E9%98%9F%E7%A4%BA%E4%BE%8B" tabindex="-1">16.1 四人团队示例</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>主要任务</th>
+<th>交付物</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>产品/项目负责人</td>
+<td>研究证据、流程、进度、路演</td>
+<td>PRD、证据摘要、PPT</td>
+</tr>
+<tr>
+<td>AI/后端</td>
+<td>PDF、RAG、Agent、规则、API</td>
+<td>后端代码、提示词、测试</td>
+</tr>
+<tr>
+<td>前端/体验</td>
+<td>页面、报告、交互、适老模式</td>
+<td>前端代码、UI 截图</td>
+</tr>
+<tr>
+<td>商业/测试</td>
+<td>市场、竞品、商业模式、Demo</td>
+<td>商业分析、测试报告、视频</td>
+</tr>
+</tbody>
+</table>
+<h3 id="16.2-%E4%B8%89%E4%BA%BA%E5%9B%A2%E9%98%9F%E7%A4%BA%E4%BE%8B" tabindex="-1">16.2 三人团队示例</h3>
+<ul>
+<li>A：产品、用户研究、商业计划与路演；</li>
+<li>B：文档解析、Agent、后端与测试；</li>
+<li>C：前端、视觉、部署与 Demo 视频。</li>
+</ul>
+<h3 id="16.3-%E5%9B%A2%E9%98%9F%E5%8D%8F%E4%BD%9C%E8%AF%81%E6%98%8E" tabindex="-1">16.3 团队协作证明</h3>
+<ul>
+<li>GitHub commit；</li>
+<li>Issues 与负责人；</li>
+<li>每日站会记录；</li>
+<li>任务看板；</li>
+<li>测试记录；</li>
+<li>PPT 中展示成员的具体贡献。</li>
+</ul>
+<p>不能只写“共同完成”，应说明每个人实际负责了什么。</p>
+<hr>
+<h2 id="17.-%E5%88%B6%E4%BD%9C%E6%8E%92%E6%9C%9F" tabindex="-1">17. 制作排期</h2>
+<h3 id="17.1-%E4%B8%8D%E8%B6%B3%E4%B8%80%E5%A4%A9%E7%9A%84%E5%86%B2%E5%88%BA%E8%AE%A1%E5%88%92" tabindex="-1">17.1 不足一天的冲刺计划</h3>
+<p>以下按约 10 小时、3—4 人并行估算。人员更少时优先保证演示闭环，不追求复杂架构。</p>
+<h4 id="%E7%AC%AC-0%E2%80%941-%E5%B0%8F%E6%97%B6%EF%BC%9A%E9%94%81%E5%AE%9A%E8%8C%83%E5%9B%B4" tabindex="-1">第 0—1 小时：锁定范围</h4>
+<ul>
+<li>MVP 只支持一份银行理财产品 PDF；</li>
+<li>宣传材料先采用一段文本，不做复杂图片 OCR；</li>
+<li>确定 8 个核心字段；</li>
+<li>准备一份模拟说明书和一段故意遗漏风险的模拟宣传文案；</li>
+<li>建立 GitHub 仓库和最小任务清单。</li>
+</ul>
+<h4 id="%E7%AC%AC-1%E2%80%944-%E5%B0%8F%E6%97%B6%EF%BC%9A%E8%B7%91%E9%80%9A%E6%A0%B8%E5%BF%83%E9%93%BE%E8%B7%AF" tabindex="-1">第 1—4 小时：跑通核心链路</h4>
+<ul>
+<li>完成 PDF 上传和分页文本抽取；</li>
+<li>调用大模型返回固定 JSON；</li>
+<li>展示产品身份、收益、风险、期限、退出和费用；</li>
+<li>每条关键结论保留原文与页码；</li>
+<li>找不到内容时显示“未找到/待人工确认”。</li>
+</ul>
+<h4 id="%E7%AC%AC-4%E2%80%946-%E5%B0%8F%E6%97%B6%EF%BC%9A%E5%BD%A2%E6%88%90%E4%BA%A7%E5%93%81%E5%B7%AE%E5%BC%82" tabindex="-1">第 4—6 小时：形成产品差异</h4>
+<ul>
+<li>对比宣传文案与说明书；</li>
+<li>实现 5—8 条最关键公平性规则；</li>
+<li>生成购买前问题；</li>
+<li>完成一页式公平说明书界面；</li>
+<li>加入免责声明。</li>
+</ul>
+<h4 id="%E7%AC%AC-6%E2%80%947.5-%E5%B0%8F%E6%97%B6%EF%BC%9A%E6%B5%8B%E8%AF%95%E5%92%8C%E4%BF%AE%E5%A4%8D" tabindex="-1">第 6—7.5 小时：测试和修复</h4>
+<ul>
+<li>只测试标准、遗漏、冲突三种情况；</li>
+<li>优先修复数字错误、错页引用和无依据结论；</li>
+<li>找 1—2 名同学做 10 分钟冒烟测试；找不到则如实标记未完成外部测试；</li>
+<li>保存一份稳定的示例结果作为 Demo 备用。</li>
+</ul>
+<h4 id="%E7%AC%AC-7.5%E2%80%949-%E5%B0%8F%E6%97%B6%EF%BC%9A%E4%BA%A4%E4%BB%98%E6%9D%90%E6%96%99" tabindex="-1">第 7.5—9 小时：交付材料</h4>
+<ul>
+<li>README 只写实际完成的功能；</li>
+<li>PPT 控制在 8—10 页；</li>
+<li>使用已有研究支撑需求，不做临时问卷；</li>
+<li>截图并录制 3 分钟左右 Demo；</li>
+<li>把未完成能力统一标记为后续规划。</li>
+</ul>
+<h4 id="%E7%AC%AC-9%E2%80%9410-%E5%B0%8F%E6%97%B6%EF%BC%9A%E6%9C%80%E7%BB%88%E6%A0%B8%E9%AA%8C" tabindex="-1">第 9—10 小时：最终核验</h4>
+<ul>
+<li>检查 GitHub 无密钥和敏感数据；</li>
+<li>检查产品、PPT、README、Demo 的说法一致；</li>
+<li>本地重新跑一遍完整流程；</li>
+<li>准备录屏和缓存报告作为现场备用；</li>
+<li>每名成员准备自己负责部分的 30 秒说明。</li>
+</ul>
+<h3 id="17.2-%E6%97%B6%E9%97%B4%E4%B8%8D%E8%B6%B3%E6%97%B6%E7%9A%84%E7%A0%8D%E5%8A%9F%E8%83%BD%E9%A1%BA%E5%BA%8F" tabindex="-1">17.2 时间不足时的砍功能顺序</h3>
+<p>优先砍掉：</p>
+<ol>
+<li>多产品对比；</li>
+<li>用户登录；</li>
+<li>历史记录；</li>
+<li>语音模式；</li>
+<li>多种产品类型；</li>
+<li>在线支付；</li>
+<li>复杂管理后台。</li>
+</ol>
+<p>绝对不能砍掉：</p>
+<ul>
+<li>PDF 解析；</li>
+<li>核心字段；</li>
+<li>原文引用；</li>
+<li>风险与费用说明；</li>
+<li>宣传材料一致性；</li>
+<li>完整 Demo 流程；</li>
+<li>错误和不确定性提示。</li>
+</ul>
+<hr>
+<h2 id="18.-%E6%9C%80%E7%BB%88%E4%BA%A4%E4%BB%98%E6%B8%85%E5%8D%95" tabindex="-1">18. 最终交付清单</h2>
+<h3 id="18.1-%E4%BA%A7%E5%93%81" tabindex="-1">18.1 产品</h3>
+<ul>
+<li><input type="checkbox" id="checkbox0"><label for="checkbox0">可运行的 MVP；</label></li>
+<li><input type="checkbox" id="checkbox1"><label for="checkbox1">公开或本地可访问；</label></li>
+<li><input type="checkbox" id="checkbox2"><label for="checkbox2">至少一个完整示例；</label></li>
+<li><input type="checkbox" id="checkbox3"><label for="checkbox3">上传、分析、报告流程无阻塞；</label></li>
+<li><input type="checkbox" id="checkbox4"><label for="checkbox4">失败时有提示；</label></li>
+<li><input type="checkbox" id="checkbox5"><label for="checkbox5">不泄露密钥和数据。</label></li>
+</ul>
+<h3 id="18.2-github" tabindex="-1">18.2 GitHub</h3>
+<ul>
+<li><input type="checkbox" id="checkbox6"><label for="checkbox6">完整源代码；</label></li>
+<li><input type="checkbox" id="checkbox7"><label for="checkbox7">README；</label></li>
+<li><input type="checkbox" id="checkbox8"><label for="checkbox8">安装说明；</label></li>
+<li><input type="checkbox" id="checkbox9"><label for="checkbox9"></label><code>.env.example</code>；</li>
+<li><input type="checkbox" id="checkbox10"><label for="checkbox10">示例数据；</label></li>
+<li><input type="checkbox" id="checkbox11"><label for="checkbox11">测试；</label></li>
+<li><input type="checkbox" id="checkbox12"><label for="checkbox12">团队分工；</label></li>
+<li><input type="checkbox" id="checkbox13"><label for="checkbox13">Demo 与 PPT 链接；</label></li>
+<li><input type="checkbox" id="checkbox14"><label for="checkbox14">License。</label></li>
+</ul>
+<h3 id="18.3-%E5%95%86%E4%B8%9A%E8%AE%A1%E5%88%92%E4%B9%A6%2Fppt" tabindex="-1">18.3 商业计划书/PPT</h3>
+<ul>
+<li><input type="checkbox" id="checkbox15"><label for="checkbox15">用户痛点；</label></li>
+<li><input type="checkbox" id="checkbox16"><label for="checkbox16">需求证据；</label></li>
+<li><input type="checkbox" id="checkbox17"><label for="checkbox17">产品方案；</label></li>
+<li><input type="checkbox" id="checkbox18"><label for="checkbox18">Agent 与技术；</label></li>
+<li><input type="checkbox" id="checkbox19"><label for="checkbox19">创新点；</label></li>
+<li><input type="checkbox" id="checkbox20"><label for="checkbox20">测试结果；</label></li>
+<li><input type="checkbox" id="checkbox21"><label for="checkbox21">市场与竞品；</label></li>
+<li><input type="checkbox" id="checkbox22"><label for="checkbox22">获客与转化；</label></li>
+<li><input type="checkbox" id="checkbox23"><label for="checkbox23">商业模式；</label></li>
+<li><input type="checkbox" id="checkbox24"><label for="checkbox24">风险和边界；</label></li>
+<li><input type="checkbox" id="checkbox25"><label for="checkbox25">团队分工；</label></li>
+<li><input type="checkbox" id="checkbox26"><label for="checkbox26">下一步计划。</label></li>
+</ul>
+<h3 id="18.4-demo-%E8%A7%86%E9%A2%91" tabindex="-1">18.4 Demo 视频</h3>
+<ul>
+<li><input type="checkbox" id="checkbox27"><label for="checkbox27">能看到实际产品；</label></li>
+<li><input type="checkbox" id="checkbox28"><label for="checkbox28">有完整用户流程；</label></li>
+<li><input type="checkbox" id="checkbox29"><label for="checkbox29">展示 Agent 多步骤处理；</label></li>
+<li><input type="checkbox" id="checkbox30"><label for="checkbox30">展示原文证据；</label></li>
+<li><input type="checkbox" id="checkbox31"><label for="checkbox31">展示宣传材料差异；</label></li>
+<li><input type="checkbox" id="checkbox32"><label for="checkbox32">有价值总结；</label></li>
+<li><input type="checkbox" id="checkbox33"><label for="checkbox33">有风险边界；</label></li>
+<li><input type="checkbox" id="checkbox34"><label for="checkbox34">无密钥和个人信息。</label></li>
+</ul>
+<h3 id="18.5-%E7%AD%94%E8%BE%A9%E5%87%86%E5%A4%87" tabindex="-1">18.5 答辩准备</h3>
+<ul>
+<li><input type="checkbox" id="checkbox35"><label for="checkbox35">30 秒项目介绍；</label></li>
+<li><input type="checkbox" id="checkbox36"><label for="checkbox36">3 分钟产品介绍；</label></li>
+<li><input type="checkbox" id="checkbox37"><label for="checkbox37">6—8 分钟完整路演；</label></li>
+<li><input type="checkbox" id="checkbox38"><label for="checkbox38">准备本地备用环境；</label></li>
+<li><input type="checkbox" id="checkbox39"><label for="checkbox39">准备录屏备用；</label></li>
+<li><input type="checkbox" id="checkbox40"><label for="checkbox40">明确回答“为什么不用通用大模型”；</label></li>
+<li><input type="checkbox" id="checkbox41"><label for="checkbox41">明确回答“如何控制幻觉”；</label></li>
+<li><input type="checkbox" id="checkbox42"><label for="checkbox42">明确回答“是否构成投资建议”；</label></li>
+<li><input type="checkbox" id="checkbox43"><label for="checkbox43">明确回答“用户从哪里来”；</label></li>
+<li><input type="checkbox" id="checkbox44"><label for="checkbox44">明确回答“如何赚钱”。</label></li>
+</ul>
+<hr>
+<h2 id="19.-%E7%AD%94%E8%BE%A9%E9%AB%98%E9%A2%91%E9%97%AE%E9%A2%98" tabindex="-1">19. 答辩高频问题</h2>
+<h3 id="q1%EF%BC%9A%E8%BF%99%E5%92%8C%E7%9B%B4%E6%8E%A5%E6%8A%8A-pdf-%E5%8F%91%E7%BB%99%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F" tabindex="-1">Q1：这和直接把 PDF 发给大模型有什么区别？</h3>
+<p>回答要点：</p>
+<ul>
+<li>固定的金融信息结构；</li>
+<li>专门的公平性规则；</li>
+<li>宣传材料与正式文件交叉核验；</li>
+<li>强制原文引用；</li>
+<li>证据核验 Agent；</li>
+<li>不确定性和人工复核机制；</li>
+<li>可复用的标准报告。</li>
+</ul>
+<h3 id="q2%EF%BC%9A%E4%BD%A0%E4%BB%AC%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81-ai-%E4%B8%8D%E8%83%A1%E8%AF%B4%EF%BC%9F" tabindex="-1">Q2：你们怎么保证 AI 不胡说？</h3>
+<p>回答要点：</p>
+<ul>
+<li>只基于上传文件；</li>
+<li>分页保留来源；</li>
+<li>每条结论附引用；</li>
+<li>结构化 JSON；</li>
+<li>规则引擎检查数字；</li>
+<li>二次证据核验；</li>
+<li>找不到时返回待确认；</li>
+<li>测试报告披露错误。</li>
+</ul>
+<h3 id="q3%EF%BC%9A%E5%AE%83%E4%BC%9A%E4%B8%8D%E4%BC%9A%E6%9E%84%E6%88%90%E6%8A%95%E8%B5%84%E5%BB%BA%E8%AE%AE%EF%BC%9F" tabindex="-1">Q3：它会不会构成投资建议？</h3>
+<p>回答要点：</p>
+<ul>
+<li>不推荐具体产品；</li>
+<li>不输出买卖结论；</li>
+<li>不预测收益；</li>
+<li>只做信息整理和解释；</li>
+<li>提供正式文件原文；</li>
+<li>明确免责声明和人工咨询提示。</li>
+</ul>
+<h3 id="q4%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%91%E8%9E%8D%E6%9C%BA%E6%9E%84%E6%84%BF%E6%84%8F%E4%BB%98%E8%B4%B9%EF%BC%9F" tabindex="-1">Q4：为什么金融机构愿意付费？</h3>
+<p>回答要点：</p>
+<ul>
+<li>营销材料初审；</li>
+<li>降低人工查找时间；</li>
+<li>统一通俗解释口径；</li>
+<li>支持消保培训；</li>
+<li>提供可审计的结论与证据；</li>
+<li>最终仍保留人工审核。</li>
+</ul>
+<h3 id="q5%EF%BC%9A%E5%B8%82%E5%9C%BA%E4%B8%8A%E6%98%AF%E4%B8%8D%E6%98%AF%E5%B7%B2%E7%BB%8F%E6%9C%89%E7%B1%BB%E4%BC%BC%E4%BA%A7%E5%93%81%EF%BC%9F" tabindex="-1">Q5：市场上是不是已经有类似产品？</h3>
+<p>回答要点：</p>
+<ul>
+<li>通用问答和智能客服已经很多；</li>
+<li>文件总结也不是新技术；</li>
+<li>本项目差异在“公平说明标准、宣传与正式文件对比、证据追溯及人机边界”；</li>
+<li>不声称市场上完全没有竞品；</li>
+<li>先从一个细分场景验证需求。</li>
+</ul>
+<hr>
+<h2 id="20.-%E9%A1%B9%E7%9B%AE%E5%AE%8C%E6%88%90%E6%A0%87%E5%87%86" tabindex="-1">20. 项目完成标准</h2>
+<p>只有同时满足以下条件，才算完成课程 MVP：</p>
+<ol>
+<li>用户能够独立完成一次分析；</li>
+<li>系统输出至少八类核心信息；</li>
+<li>关键结论都有原文出处；</li>
+<li>系统能够发现预设的宣传与正式文件差异；</li>
+<li>材料缺失或冲突时不会自行编造；</li>
+<li>产品不输出买卖建议；</li>
+<li>至少完成三套测试案例；</li>
+<li>至少完成一次非开发者用户测试；</li>
+<li>GitHub 可以按照 README 运行；</li>
+<li>PPT、产品、README 和 Demo 的说法一致；</li>
+<li>Demo 视频能证明产品实际工作；</li>
+<li>团队分工和贡献清晰；</li>
+<li>明确披露项目限制、数据风险和人工复核边界。</li>
+</ol>
+<hr>
+<h2 id="21.-%E4%B8%8B%E4%B8%80%E6%AD%A5%E7%AB%8B%E5%8D%B3%E8%A1%8C%E5%8A%A8" tabindex="-1">21. 下一步立即行动</h2>
+<p>团队拿到本方案后，首先完成以下七项：</p>
+<ol>
+<li>向老师确认截止时间、PPT/视频要求和评分标准；</li>
+<li>确定团队成员及分工；</li>
+<li>确定 MVP 只支持银行理财产品；</li>
+<li>制作一份教学模拟说明书和一张有信息遗漏的模拟海报；</li>
+<li>整理本方案第 3 节的研究证据；时间允许时完成 1—2 人冒烟测试；</li>
+<li>建立 GitHub 仓库和任务看板；</li>
+<li>先做通“上传 PDF—提取字段—引用页码—生成报告”这一条核心链路。</li>
+</ol>
+<p>在核心链路跑通之前，不要优先投入登录、动画、多产品支持或复杂管理后台。</p>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    </body>
+</html>

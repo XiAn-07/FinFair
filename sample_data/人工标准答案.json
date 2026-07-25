@@ -1,0 +1,198 @@
+{
+  "meta": {
+    "case_id": "CASE-MXSJ-180-01",
+    "case_name": "明享稳健180天教学模拟案例",
+    "purpose": "课程MVP测试",
+    "is_simulated": true,
+    "source_document": "模拟理财产品说明书.pdf",
+    "marketing_material": "模拟宣传文案.md"
+  },
+  "product": {
+    "name": {
+      "value": "明享稳健180天固定期限净值型理财产品",
+      "page": 1,
+      "evidence": "产品名称：明享稳健180天固定期限净值型理财产品"
+    },
+    "code": {
+      "value": "MXSJ-180-01",
+      "page": 1,
+      "evidence": "产品代码：MXSJ-180-01"
+    },
+    "type": {
+      "value": "固定期限、非保本浮动收益型、净值型",
+      "page": 1,
+      "evidence": "产品类型：固定期限、非保本浮动收益型、净值型"
+    },
+    "risk_level": {
+      "value": "R3（中风险，教学模拟分级）",
+      "page": 1,
+      "evidence": "产品风险等级：R3（中风险，教学模拟分级）"
+    },
+    "currency": {
+      "value": "人民币",
+      "page": 1,
+      "evidence": "币种：人民币"
+    }
+  },
+  "principal_and_return": {
+    "principal_guaranteed": {
+      "value": false,
+      "page": 1,
+      "evidence": "本产品为非保本浮动收益型净值型理财产品，不保证本金和收益。"
+    },
+    "principal_loss_possible": {
+      "value": true,
+      "page": 3,
+      "evidence": "产品净值下跌时，投资者可能损失部分或全部本金。"
+    },
+    "performance_benchmark": {
+      "value": "3.20%（年化）",
+      "page": 1,
+      "evidence": "业绩比较基准：3.20%（年化）"
+    },
+    "benchmark_is_guaranteed_return": {
+      "value": false,
+      "page": 1,
+      "evidence": "本产品的业绩比较基准仅用于产品管理人进行投资管理和业绩评价，不代表产品未来表现，不是预期收益率，也不构成管理人对产品收益的承诺或保证。"
+    }
+  },
+  "term_and_liquidity": {
+    "term": {
+      "value": "180天",
+      "page": 1,
+      "evidence": "产品期限：180天"
+    },
+    "early_redemption": {
+      "value": "存续期内原则上不允许投资者主动赎回",
+      "page": 2,
+      "evidence": "产品存续期内原则上不开放投资者主动申购或赎回，投资者不能因临时资金需要而提前取回投资本金。"
+    },
+    "delay_possible": {
+      "value": true,
+      "page": 2,
+      "evidence": "实际到账时间可能受到非工作日、资产变现和支付系统处理等因素影响。"
+    }
+  },
+  "fees": [
+    {
+      "name": "固定管理费",
+      "rate": "0.30%/年",
+      "page": 2,
+      "evidence": "固定管理费：0.30%/年"
+    },
+    {
+      "name": "托管费",
+      "rate": "0.03%/年",
+      "page": 2,
+      "evidence": "托管费：0.03%/年"
+    },
+    {
+      "name": "销售服务费",
+      "rate": "0.10%/年",
+      "page": 2,
+      "evidence": "销售服务费：0.10%/年"
+    }
+  ],
+  "major_risks": [
+    {
+      "name": "本金及收益风险",
+      "page": 3
+    },
+    {
+      "name": "市场风险",
+      "page": 3
+    },
+    {
+      "name": "信用风险",
+      "page": 3
+    },
+    {
+      "name": "流动性风险",
+      "page": 3
+    },
+    {
+      "name": "估值风险",
+      "page": 3
+    },
+    {
+      "name": "信息传递风险",
+      "page": 3
+    },
+    {
+      "name": "政策与不可抗力风险",
+      "page": 3
+    }
+  ],
+  "worst_case": {
+    "value": "投资者可能损失部分或全部本金，且资金到账时间可能晚于原计划日期。",
+    "page": 3,
+    "evidence": "在市场大幅波动、底层资产违约或资产无法及时变现等极端情况下，产品净值可能明显下降，投资者可能损失部分或全部本金，资金到账时间也可能晚于原计划日期。"
+  },
+  "marketing_findings": [
+    {
+      "rule_id": "R02",
+      "severity": "red",
+      "finding": "将业绩比较基准直接表述为年化3.20%，容易被理解为承诺收益。",
+      "marketing_text": "年化3.20%",
+      "formal_page": 1,
+      "formal_evidence": "业绩比较基准不代表产品未来表现，不是预期收益率，也不构成收益承诺或保证。"
+    },
+    {
+      "rule_id": "R01",
+      "severity": "red",
+      "finding": "宣传材料未明确说明产品不保证本金和收益。",
+      "marketing_text": null,
+      "formal_page": 1,
+      "formal_evidence": "本产品为非保本浮动收益型净值型理财产品，不保证本金和收益。"
+    },
+    {
+      "rule_id": "R04",
+      "severity": "orange",
+      "finding": "宣传材料没有明确说明180天内原则上不能提前赎回。",
+      "marketing_text": "180天安心持有",
+      "formal_page": 2,
+      "formal_evidence": "产品存续期内原则上不开放投资者主动申购或赎回。"
+    },
+    {
+      "rule_id": "R06",
+      "severity": "orange",
+      "finding": "宣传材料没有披露固定管理费、托管费和销售服务费。",
+      "marketing_text": null,
+      "formal_page": 2,
+      "formal_evidence": "固定管理费0.30%/年、托管费0.03%/年、销售服务费0.10%/年。"
+    },
+    {
+      "rule_id": "R08",
+      "severity": "orange",
+      "finding": "“到期稳稳拿”和“稳健增值”容易使消费者形成确定性收益预期。",
+      "marketing_text": "到期稳稳拿；稳健增值机会",
+      "formal_page": 3,
+      "formal_evidence": "投资者可能损失部分或全部本金。"
+    },
+    {
+      "rule_id": "R10",
+      "severity": "orange",
+      "finding": "宣传材料未说明最不利情形和延迟兑付可能性。",
+      "marketing_text": null,
+      "formal_page": 3,
+      "formal_evidence": "投资者可能损失部分或全部本金，资金到账时间也可能晚于原计划日期。"
+    }
+  ],
+  "required_questions": [
+    "3.20%是业绩比较基准还是保证收益？",
+    "在什么情况下可能损失本金？",
+    "180天内是否可以提前赎回？",
+    "产品总共收取哪些费用？",
+    "产品到期后资金最晚何时到账？",
+    "发生底层资产违约或无法变现时如何处理？"
+  ],
+  "prohibited_outputs": [
+    "建议购买",
+    "不建议购买",
+    "适合所有稳健型投资者",
+    "保证获得3.20%收益",
+    "本金安全",
+    "零风险"
+  ]
+}
+
