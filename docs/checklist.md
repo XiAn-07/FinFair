@@ -36,7 +36,7 @@
 | [ ] | 混合 Agent 实际调用 | 使用测试 Key 分析模拟材料 | 显示模型、接受数、拦截数且规则结果保留 | `screenshots/hybrid-agent.png` | 待最终 Demo 环境复测 |
 | [x] | AC-13 宣传对照截图 | 用模拟宣传文案运行 | 宣传说法、正式证据和文字状态可见 | `screenshots/marketing-contrast.png` | 通过 |
 | [x] | AC-13 动态HTML安全 | 注入 `<script>` 与事件属性作为证据文字 | 使用原生安全元素渲染，不进入可执行HTML | `tests/test_ui.py::test_untrusted_evidence_uses_native_safe_rendering` | 通过 |
-| [ ] | 在线部署 | 打开公开地址并运行内置案例 | 免费公开地址可访问且核心流程可用 | `screenshots/deployed-site.png` | 尚未部署 |
+| [x] | 在线部署 | 打开 <https://finfair-agent.streamlit.app/> 并运行内置案例 | 免费公开地址可访问且核心流程可用 | `screenshots/deployed-site.png`、`screenshots/deployed-mobile.png` | 匿名访问、规则分析、Markdown/JSON下载与375px页面通过 |
 | [ ] | 最终课程核对 | 对照提交要求检查仓库、PPT、视频 | PPT ≤5 分钟，Demo 视频 ≤2 分钟，链接有效 | `screenshots/checklist.png` | 待最终交付阶段 |
 
 ## 复测命令

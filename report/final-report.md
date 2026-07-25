@@ -55,16 +55,25 @@
 
 2026-07-25 本轮结果：
 
-- Streamlit AppTest：应用加载通过；
-- Python 编译检查：通过；
-- 当前终端测试：6 项通过，1 项因当前 Python 缺少 `pdfplumber` 未通过；
-- 完整依赖环境下的最终结果：**待复测并以 `docs/checklist.md` 为准**。
-
-人工页面、移动端、四格式下载和部署验证仍待完成。
+- 规则与 Agent 相关 pytest：31 项通过、1 项跳过；
+- Streamlit AppTest：2 项通过；
+- 模拟标准答案基准集：12/12 案例通过；
+- 完整依赖环境的 PDF 主流程：通过；
+- 桌面端与 375px 手机端页面：通过；
+- Markdown、JSON、Word、PDF 四格式本地生成：通过；
+- 线上匿名访问、内置案例、Markdown 与 JSON 下载：通过。
 
 ## 6. 部署地址
 
-**待完成。** 当前不能宣称项目已经在线上线。计划优先选择免费且操作简便的平台，部署完成后记录公开地址、版本、时间和截图证据。
+- 公开地址：<https://finfair-agent.streamlit.app/>
+- 平台：Streamlit Community Cloud 免费方案；
+- 仓库与分支：`XiAn-07/FinFair`，`main`；
+- 部署提交：`de41875`；
+- Python：3.13；
+- 部署与复测日期：2026-07-25；
+- 证据：`screenshots/deployed-site.png`、`screenshots/deployed-mobile.png`。
+
+匿名访问已验证；线上规则模式成功解析内置 4 页模拟 PDF，提取 8 个核心字段并识别 6 项宣传核验问题。Markdown 与 JSON 下载均触发成功。线上部署仍遵循 BYOK：平台不保存团队共享模型密钥，未配置 API 时使用规则模式。
 
 ## 7. 问题、修复和复测
 
@@ -77,7 +86,7 @@
 | 双阶段 Agent 过程不够直观 | 展示四阶段状态、模型协议、候选/核验/门控/拦截计数和停止原因 | `finfair/core.py`、`finfair/llm_agent.py`、`app.py` | 固定两次调用、空候选停止和虚构引用拦截测试通过 |
 | 只有代码用例数，缺少可解释质量指标 | 建立12例模拟标准答案集和带分母的规则模式指标 | `tests/fixtures/benchmark_cases.json`、`scripts/run_benchmark.py`、`report/benchmark-results.json` | 12/12通过；结果仅适用于该模拟集 |
 | 页面层级与手机端体验不足 | 重构首屏、双入口、三步输入、核心结果和下载区，增加安全动态文本渲染 | `app.py`、`.streamlit/config.toml`、`tests/test_ui.py` | 1440px与375px无页面横向溢出，四个下载入口可见 |
-| 当前终端缺少 `pdfplumber` | 保留失败记录，在完整依赖环境复测 | 无代码改动 | 待复测 |
+| 当前终端缺少 `pdfplumber` | 保留失败记录，并用完整依赖环境单独复测 PDF 主流程 | 无代码改动 | 完整依赖环境复测通过 |
 
 后续问题按 `docs/checklist.md` 逐项记录，取得证据后才能关闭。
 
